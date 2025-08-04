@@ -2,7 +2,6 @@
 import * as z from 'zod';
 const schema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
 });
 definePageMeta({
   layout: "auth",
@@ -12,7 +11,7 @@ definePageMeta({
 <template>
   <UCard class="w-full max-w-sm" variant="soft">
     <UAuthForm
-      title="Login"
+      title="Forgot Password"
       :schema="schema"
       :validate-on="['blur']"
       :fields="[
@@ -20,11 +19,6 @@ definePageMeta({
           name: 'email',
           type: 'text',
           label: 'Email',
-        },
-        {
-          name: 'password',
-          type: 'password',
-          label: 'Password',
         },
       ]"
     >
@@ -35,9 +29,14 @@ definePageMeta({
         >.
       </template>
       <template #footer>
-        <ULink to="/auth/forgot-password" class="text-sm text-primary-500">
-          Forgot Password?
-        </ULink>
+        <div class="flex justify-between">
+          <ULink to="/auth/sign-in" class="text-sm text-primary-500">
+            Back to Sign In
+          </ULink>
+          <ULink to="/auth/sign-up" class="text-sm text-primary-500">
+            Sign Up
+          </ULink>
+        </div>
       </template>
     </UAuthForm>
   </UCard>

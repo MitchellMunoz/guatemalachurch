@@ -26,7 +26,7 @@ const createUser = async (email: string) => {
   refresh();
 };
 
-const deleteUser = async (id: number) => {
+const deleteUser = async (id: string) => {
   await $fetch(`/api/user`, { method: "DELETE", query: { id } });
   refresh();
 };

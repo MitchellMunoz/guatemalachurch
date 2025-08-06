@@ -16,10 +16,10 @@ const schema = z.object({
 
 const { signUp } = useAuth();
 
-const { mutateAsync: signUpWithEmail } = signUp.withEmail();
+const { mutateAsync: asyncSignUp } = signUp.withEmail();
 
 const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
-  const success = await signUpWithEmail({
+  const success = await asyncSignUp({
     email: data.email,
     password: data.password,
     name: `${data.firstName} ${data.lastName}`,

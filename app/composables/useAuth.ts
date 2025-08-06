@@ -140,6 +140,7 @@ export const useAuth = () => {
     user,
     loggedIn,
     fetch,
+    session,
     signIn: {
       withSocial: () => createAuthMethod(wrappedSignInSocial),
       withEmail: () => createAuthMethod(wrappedSignInEmail),

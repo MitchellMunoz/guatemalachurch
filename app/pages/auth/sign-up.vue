@@ -1,17 +1,34 @@
 <script setup lang="ts">
-import * as z from 'zod';
+import { z } from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
+
+definePageMeta({
+  layout: "auth",
+});
 
 const schema = z.object({
   email: z.string().email(),
-  phone: z.string().optional(),
   password: z.string().min(6),
   confirmPassword: z.string().min(6),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
 });
-definePageMeta({
-  layout: "auth",
-});
+
+const { signUp } = useAuth();
+
+const { mutateAsync: signUpWithEmail } = signUp.withEmail();
+
+const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
+  const success = await signUpWithEmail({
+    email: data.email,
+    password: data.password,
+    name: `${data.firstName} ${data.lastName}`,
+  });
+
+  if (success) {
+    navigateTo("/dashboard");
+  }
+};
 </script>
 
 <template>
@@ -20,16 +37,12 @@ definePageMeta({
       title="Sign Up"
       :schema="schema"
       :validate-on="['blur']"
+      @submit="onSignUp"
       :fields="[
         {
           name: 'email',
           type: 'text',
           label: 'Email',
-        },
-        {
-          name: 'phone',
-          type: 'text',
-          label: 'phone',
         },
         {
           name: 'password',
@@ -55,9 +68,10 @@ definePageMeta({
     >
       <template #description>
         Don't have an account?
-        <ULink to="/auth/sign-up" class="font-medium text-primary-500">
-          Create One </ULink
-        >.
+        <NuxtLink to="/auth/sign-up" class="font-medium text-primary-500">
+          Create One
+        </NuxtLink>
+        .
       </template>
     </UAuthForm>
   </UCard>

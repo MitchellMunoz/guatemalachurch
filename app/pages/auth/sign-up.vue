@@ -67,9 +67,9 @@ const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
       ]"
     >
       <template #description>
-        Don't have an account?
-        <NuxtLink to="/auth/sign-up" class="font-medium text-primary-500">
-          Create One
+        Already have an account?
+        <NuxtLink to="/auth/sign-in" class="font-medium text-primary-500">
+          Sign In
         </NuxtLink>
         .
       </template>

@@ -26,7 +26,7 @@ const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
   });
 
   if (success) {
-    navigateTo("/dashboard");
+    navigateTo("/auth/sign-in");
   }
 };
 </script>

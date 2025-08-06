@@ -24,7 +24,7 @@
       </UButton>
     </template>
   </UHeader>
-  <UMain class="w-full max-w-(--ui-container) mx-auto p-4 sm:px-6 lg:px-8 flex justify-between gap-3">
+  <UMain class="w-full max-w-(--ui-container) mx-auto p-4 sm:px-6 lg:px-8">
     <slot />
   </UMain>
 </template>

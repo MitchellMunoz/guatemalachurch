@@ -71,7 +71,6 @@ const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
         <NuxtLink to="/auth/sign-in" class="font-medium text-primary-500">
           Sign In
         </NuxtLink>
-        .
       </template>
     </UAuthForm>
   </UCard>

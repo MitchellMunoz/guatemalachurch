@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: "dashboard",
+  layout: "default",
 });
 
 useHead({
@@ -17,6 +17,8 @@ const { data, refresh } = await useAsyncData("users", () =>
 
 const email = ref("");
 const post = ref("");
+const postAuthor = ref("");
+const postTitle = ref("");
 
 const createUser = async (email: string) => {
   await $fetch("/api/user", { method: "POST", body: { email } });
@@ -49,7 +51,7 @@ const deletePost = async (id: number) => {
   <USeparator />
   <UButton @click="() => refresh()">Refresh</UButton>
   <h3>Users ({{ data?.length }})</h3>
-  <div v-for="user in data" :key="user.id" class="flex items-center gap-2">
+  <div v-for="user in data" :key="user.id">
     <div>{{ user.email }}</div>
     <UButton
       variant="soft"
@@ -59,27 +61,33 @@ const deletePost = async (id: number) => {
     >
       Delete
     </UButton>
-    <USeparator />
+    <USeparator class="my-2"/>
   </div>
-    <div class="flex gap-2">
+    <div class="flex gap-2 mt-8">
       <UInput v-model="postTitle" placeholder="Title" />
       <UInput v-model="post" placeholder="Posts" />
       <UInput v-model="postAuthor" placeholder="Author" />
 
       <UButton @click="() => createPost(post, postAuthor, postTitle)"> Create Post </UButton>
     </div>
-    <USeparator />
+    <USeparator  class="my-2"/>
     <UButton @click="() => refreshPosts()">Refresh</UButton>
     <h3>Posts ({{ posts?.length }})</h3>
-    <div v-for="post in posts" :key="post.id" class="flex items-center gap-2">
-      <div>{{ post.content }}</div>
+    <div v-for="post in posts" :key="post.id">
+      <div class="flex flex-col w-full">
+        <h3 class="font-bold">{{ post.title }} </h3>
+        <p>{{  post.content }}</p>
+        <p>Author: {{ post.authorId }}</p>
+      </div>
       <UButton
         variant="soft"
         color="error"
         size="sm"
+        class="my-2"
         @click="() => deletePost(post.id)"
       >
         Delete
       </UButton>
+      <USeparator />
   </div>
 </template>

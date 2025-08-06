@@ -16,7 +16,7 @@ const schema = z.object({
 
 const { signUp } = useAuth();
 
-const { mutateAsync: asyncSignUp } = signUp.withEmail();
+const { error, isLoading, mutateAsync: asyncSignUp } = signUp.withEmail();
 
 const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
   const success = await asyncSignUp({
@@ -38,6 +38,7 @@ const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
       :schema="schema"
       :validate-on="['blur']"
       @submit="onSignUp"
+      :loading="isLoading"
       :fields="[
         {
           name: 'email',
@@ -71,6 +72,14 @@ const onSignUp = async ({ data }: FormSubmitEvent<z.infer<typeof schema>>) => {
         <NuxtLink to="/auth/sign-in" class="font-medium text-primary-500">
           Sign In
         </NuxtLink>
+      </template>
+      <template #validation>
+        <UAlert
+          v-if="error"
+          color="error"
+          variant="soft"
+          :description="error.message"
+        />
       </template>
     </UAuthForm>
   </UCard>

@@ -71,6 +71,7 @@ export const useAuth = () => {
           if (fetchOnSuccess) {
             await fetch();
           }
+
           return true;
         }
 
@@ -79,40 +80,25 @@ export const useAuth = () => {
     };
   }
 
-  const wrappedSignInSocial = async (
+  const wrappedSignInSocial = (
     options: FirstParameter<typeof client.signIn.social>
-  ) => {
-    const { data, error } = await client.signIn.social(options);
-    return { data, error };
-  };
+  ) => client.signIn.social(options);
 
-  const wrappedSignInEmail = async (
+  const wrappedSignInEmail = (
     options: FirstParameter<typeof client.signIn.email>
-  ) => {
-    const { data, error } = await client.signIn.email(options);
-    return { data, error };
-  };
+  ) => client.signIn.email(options);
 
-  const wrappedSignUpEmail = async (
+  const wrappedSignUpEmail = (
     options: FirstParameter<typeof client.signUp.email>
-  ) => {
-    const { data, error } = await client.signUp.email(options);
-    return { data, error };
-  };
+  ) => client.signUp.email(options);
 
-  const wrappedForgetPassword = async (
+  const wrappedForgetPassword = (
     options: FirstParameter<typeof client.forgetPassword>
-  ) => {
-    const { data, error } = await client.forgetPassword(options);
-    return { data, error };
-  };
+  ) => client.forgetPassword(options);
 
-  const wrappedResetPassword = async (
+  const wrappedResetPassword = (
     options: FirstParameter<typeof client.resetPassword>
-  ) => {
-    const { data, error } = await client.resetPassword(options);
-    return { data, error };
-  };
+  ) => client.resetPassword(options);
 
   const clear = async ({
     redirectTo,

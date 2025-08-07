@@ -1,3 +1,5 @@
-export default defineEventHandler((event) => {
-  return $auth.handler(toWebRequest(event));
+export default defineEventHandler(async (event) => {
+  const { client } = $auth();
+
+  return client.handler(toWebRequest(event));
 });

@@ -5,4 +5,7 @@ export default defineNuxtConfig({
   experimental: {
     typedPages: true,
   },
+  typescript: {
+    typeCheck: true,
+  },
 });

@@ -7,9 +7,15 @@ definePageMeta({
 useHead({
   title: "Dashboard",
 });
+type Post = {
+  id: number;
+  title: string;
+  content: string;
+  authorId: string;
+};
 
 const { data: posts, refresh: refreshPosts } = await useAsyncData("posts", () =>
-  $fetch("/api/post")
+  $fetch<Post[]>("/api/post")
 );
 
 const { data, refresh } = await useAsyncData("users", () =>
@@ -80,7 +86,7 @@ const deletePost = async (id: number) => {
   <UButton @click="() => refreshPosts()">Refresh</UButton>
   <h3>Posts ({{ posts?.length }})</h3>
   <div v-for="post in posts" :key="post.id">
-    <div class="flex flex-col w-full">
+    <div class="flex flex-col w-full" v-if="post">
       <h3 class="font-bold">{{ post.title }}</h3>
       <p>{{ post.content }}</p>
       <p>Author: {{ post.authorId }}</p>

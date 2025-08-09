@@ -1,5 +1,5 @@
 export default defineEventHandler(async () => {
-  const posts = await $database.post.findMany();
+    const posts = await $database.post.findMany();
 
-  return posts;
+    return posts;
 });

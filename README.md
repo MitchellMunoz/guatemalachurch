@@ -84,3 +84,10 @@ Due to some odd runtime quirks (seemingly due to node wanting to fallback to ele
 - Run npm install (postinstall generates .nuxt/ files)
 
 If ESLint errors don’t show in vscode: View → Output → ESLint and ensure you’re on Node 20.
+
+### IF you really really want to use node 22 and want a challenge. 
+If you see console errors fron the ESLint output `Cannot find native binding … unrs-resolver":`
+
+- Try running `npm rebuild unrs-resolver --build-from-source` and God speed.
+
+

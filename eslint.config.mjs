@@ -20,7 +20,6 @@ const config = withNuxt([
         },
         plugins: {
             vue,
-            '@typescript-eslint': tseslint.plugin,
         },
         rules: {
             ...prettierRecommended.rules,
@@ -38,15 +37,12 @@ const config = withNuxt([
     {
         files: ['**/*.{ts,tsx}'],
         languageOptions: {
-            parser: tseslint.parser,
             parserOptions: {
                 ecmaVersion: 'latest',
                 sourceType: 'module',
             },
         },
-        plugins: {
-            '@typescript-eslint': tseslint.plugin,
-        },
+        plugins: {},
         rules: {
             ...prettierRecommended.rules,
             eqeqeq: ['error', 'always'],

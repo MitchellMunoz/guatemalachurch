@@ -10,6 +10,8 @@
         "source.sortImports": "always"
     },
     "eslint.workingDirectories": [{ "mode": "auto" }],
+    "eslint.trace.server": "messages",
+    "eslint.useFlatConfig": true,
     "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
     "[vue]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -17,6 +19,8 @@
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+    "prettier.requireConfig": true, // use your .prettierrc, not User overrides
+    "prettier.prettierPath": "./node_modules/prettier",
     "editor.quickSuggestions": {
         "strings": "on"
     },

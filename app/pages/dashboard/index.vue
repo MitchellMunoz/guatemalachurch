@@ -1,9 +1,4 @@
 <script setup lang="ts">
-definePageMeta({
-    layout: 'default',
-    middleware: 'protected',
-});
-
 useHead({
     title: 'Dashboard',
 });

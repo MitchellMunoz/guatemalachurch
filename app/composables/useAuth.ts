@@ -1,141 +1,130 @@
-import { createAuthClient } from "better-auth/client";
-import { adminClient, organizationClient } from "better-auth/client/plugins";
-import type { RouteLocationRaw } from "vue-router";
+import { createAuthClient } from 'better-auth/client';
+import { adminClient, organizationClient } from 'better-auth/client/plugins';
+import type { RouteLocationRaw } from 'vue-router';
 
-type FirstParameter<T extends (...args: any[]) => any> = Parameters<T>[0];
+// Removed unused FirstParameter helper after refactor
 
 export const useAuth = () => {
-  const url = useRequestURL();
-  const headers = useRequestHeaders();
+    const url = useRequestURL();
+    const headers = useRequestHeaders();
 
-  const client = createAuthClient({
-    baseURL: url.origin,
-    fetchOptions: {
-      headers,
-    },
-    plugins: [adminClient(), organizationClient()],
-  });
-
-  type Session = (typeof client.$Infer.Session)["session"];
-  type User = (typeof client.$Infer.Session)["user"];
-
-  const session = useState<Session | null>("auth:session", () => null);
-  const user = useState<User | null>("auth:user", () => null);
-  const loggedIn = computed(() => !!session.value);
-
-  const fetch = async () => {
-    const { data: sessionData } = await client.getSession({
-      fetchOptions: {
-        headers,
-      },
+    const client = createAuthClient({
+        baseURL: url.origin,
+        fetchOptions: {
+            headers,
+        },
+        plugins: [adminClient(), organizationClient()],
     });
 
-    if (!sessionData) return null;
+    type Session = (typeof client.$Infer.Session)['session'];
+    type User = (typeof client.$Infer.Session)['user'];
 
-    session.value = sessionData.session || null;
-    user.value = sessionData.user || null;
+    const session = useState<Session | null>('auth:session', () => null);
+    const user = useState<User | null>('auth:user', () => null);
+    const loggedIn = computed(() => !!session.value);
 
-    return sessionData;
-  };
+    const fetch = async () => {
+        const { data: sessionData } = await client.getSession({
+            fetchOptions: {
+                headers,
+            },
+        });
 
-  function createAuthMethod<T extends (...args: any[]) => any>(
-    wrapperMethod: T,
-    fetchOnSuccess = true
-  ) {
-    type MethodResult = Awaited<ReturnType<typeof wrapperMethod>>;
+        if (!sessionData) return null;
 
-    const isLoading = ref(false);
-    const data = ref<MethodResult["data"] | null>(null);
-    const error = ref<MethodResult["error"] | null>(null);
-    const isError = ref(false);
-    const isSuccess = computed(() => !!data.value);
+        session.value = sessionData.session || null;
+        user.value = sessionData.user || null;
 
-    return {
-      isLoading,
-      data,
-      error,
-      isError,
-      isSuccess,
-      mutateAsync: async (options: FirstParameter<T>) => {
-        isLoading.value = true;
-
-        const { data: _data, error: _error } = await wrapperMethod(options);
-
-        isLoading.value = false;
-
-        if (_error) {
-          isError.value = true;
-          error.value = _error;
-        } else {
-          data.value = _data;
-          if (fetchOnSuccess) {
-            await fetch();
-          }
-
-          return true;
-        }
-
-        return false;
-      },
+        return sessionData;
     };
-  }
 
-  const wrappedSignInSocial = (
-    options: FirstParameter<typeof client.signIn.social>
-  ) => client.signIn.social(options);
+    function createAuthMethod<TParam, TResult extends { data: unknown; error: unknown }>(
+        wrapperMethod: (options: TParam) => Promise<TResult>,
+        fetchOnSuccess = true,
+    ) {
+        type MethodResult = Awaited<ReturnType<typeof wrapperMethod>>;
 
-  const wrappedSignInEmail = (
-    options: FirstParameter<typeof client.signIn.email>
-  ) => client.signIn.email(options);
+        const isLoading = ref(false);
+        const data = ref<MethodResult['data'] | null>(null);
+        const error = ref<MethodResult['error'] | null>(null);
+        const isError = ref(false);
+        const isSuccess = computed(() => !!data.value);
 
-  const wrappedSignUpEmail = (
-    options: FirstParameter<typeof client.signUp.email>
-  ) => client.signUp.email(options);
+        return {
+            isLoading,
+            data,
+            error,
+            isError,
+            isSuccess,
+            mutateAsync: async (options: TParam) => {
+                isLoading.value = true;
 
-  const wrappedForgetPassword = (
-    options: FirstParameter<typeof client.forgetPassword>
-  ) => client.forgetPassword(options);
+                const { data: _data, error: _error } = await wrapperMethod(options);
 
-  const wrappedResetPassword = (
-    options: FirstParameter<typeof client.resetPassword>
-  ) => client.resetPassword(options);
+                isLoading.value = false;
 
-  const clear = async ({
-    redirectTo,
-  }: { redirectTo?: RouteLocationRaw } = {}) => {
-    const res = await client.signOut();
-    session.value = null;
-    user.value = null;
+                if (_error) {
+                    isError.value = true;
+                    error.value = _error;
+                } else {
+                    data.value = _data;
+                    if (fetchOnSuccess) {
+                        await fetch();
+                    }
 
-    if (redirectTo) {
-      await navigateTo(redirectTo);
+                    return true;
+                }
+
+                return false;
+            },
+        };
     }
 
-    return res;
-  };
+    const wrappedSignInSocial = (options: Parameters<typeof client.signIn.social>[0]) => client.signIn.social(options);
 
-  if (import.meta.client) {
-    client.$store.listen("$sessionSignal", async (signal) => {
-      if (!signal) return;
+    const wrappedSignInEmail = (options: Parameters<typeof client.signIn.email>[0]) => client.signIn.email(options);
 
-      await fetch();
-    });
-  }
+    const wrappedSignUpEmail = (options: Parameters<typeof client.signUp.email>[0]) => client.signUp.email(options);
 
-  return {
-    user,
-    loggedIn,
-    fetch,
-    session,
-    signIn: {
-      withSocial: () => createAuthMethod(wrappedSignInSocial),
-      withEmail: () => createAuthMethod(wrappedSignInEmail),
-    },
-    signUp: {
-      withEmail: () => createAuthMethod(wrappedSignUpEmail, false),
-    },
-    forgetPassword: () => createAuthMethod(wrappedForgetPassword, false),
-    resetPassword: () => createAuthMethod(wrappedResetPassword, false),
-    clear,
-  };
+    const wrappedForgetPassword = (options: Parameters<typeof client.forgetPassword>[0]) =>
+        client.forgetPassword(options);
+
+    const wrappedResetPassword = (options: Parameters<typeof client.resetPassword>[0]) => client.resetPassword(options);
+
+    const clear = async ({ redirectTo }: { redirectTo?: RouteLocationRaw } = {}) => {
+        const res = await client.signOut();
+        session.value = null;
+        user.value = null;
+
+        if (redirectTo) {
+            await navigateTo(redirectTo);
+        }
+
+        return res;
+    };
+
+    if (import.meta.client) {
+        client.$store.listen('$sessionSignal', async (signal) => {
+            if (!signal) return;
+
+            await fetch();
+        });
+    }
+
+    return {
+        user,
+        loggedIn,
+        fetch,
+        session,
+        signIn: {
+            withSocial: () => createAuthMethod(wrappedSignInSocial),
+            withEmail: () => createAuthMethod(wrappedSignInEmail),
+        },
+        signUp: {
+            withEmail: () => createAuthMethod(wrappedSignUpEmail, false),
+        },
+        forgetPassword: () => createAuthMethod(wrappedForgetPassword, false),
+        resetPassword: () => createAuthMethod(wrappedResetPassword, false),
+        clear,
+    };
 };

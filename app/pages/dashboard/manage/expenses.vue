@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { Currency } from '~/composables/useCurrency';
+    import { Currency } from '~/composables/useCurrency';
 
-const { convert } = useCurrency();
+    const { convert } = useCurrency();
 
-const currencyType = ref(Currency.USD);
-const amount = ref(0);
-const gtqAmount = ref(0);
-const file = ref<File | null>(null);
-const method = ref('Cash');
+    const currencyType = ref(Currency.USD);
+    const amount = ref(0);
+    const gtqAmount = ref(0);
+    const file = ref<File | null>(null);
+    const method = ref('Cash');
 
-const getConvertedAmount = async (amount: number) => {
-    if (currencyType.value === Currency.USD) {
-        gtqAmount.value = amount;
-        return;
-    }
+    const getConvertedAmount = async (amount: number) => {
+        if (currencyType.value === Currency.USD) {
+            gtqAmount.value = amount;
+            return;
+        }
 
-    const res = await convert(currencyType.value, Currency.USD, amount);
+        const res = await convert(currencyType.value, Currency.USD, amount);
 
-    gtqAmount.value = res;
-};
+        gtqAmount.value = res;
+    };
 </script>
 <template>
     <div>

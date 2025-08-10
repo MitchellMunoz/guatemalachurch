@@ -20,14 +20,8 @@ vi.mock('better-auth/adapters/prisma', () => ({
     prismaAdapter: vi.fn(),
 }));
 
-// mock H3 and createError global
 vi.mock('h3', () => ({
-    createError: vi.fn().mockImplementation(({ statusCode, statusMessage, message }) => {
-        const error = new Error(message);
-        (error as unknown).statusCode = statusCode;
-        (error as unknown).statusMessage = statusMessage;
-        return error;
-    }),
+    getHeader: vi.fn((event, name) => event.headers?.[name.toLowerCase()]),
 }));
 
 const { $auth } = await import('../../server/utils/auth');
@@ -43,7 +37,7 @@ describe('$auth', () => {
         const auth = $auth();
         requireAuth = auth.requireAuth;
         client = auth.client;
-        event = { headers: { authorization: 'Bearer token' } } as H3Event;
+        event = { headers: { authorization: 'Bearer token' } } as unknown as H3Event;
     });
 
     it('returns session when authenticated', async () => {

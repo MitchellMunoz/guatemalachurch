@@ -1,3 +1,4 @@
+import type { Session } from 'better-auth';
 import type { H3Event } from 'h3';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -26,7 +27,16 @@ vi.mock('h3', () => ({
 
 const { $auth } = await import('../../server/utils/auth');
 
-const mockSession = { user: { id: '123', email: 'test@example.com' } };
+const mockSession: Session = {
+    id: 'session-id',
+    userId: '123',
+    expiresAt: new Date(Date.now() + 3600 * 1000),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    token: 'token',
+    ipAddress: '127.0.0.1',
+    userAgent: 'test-agent',
+};
 
 describe('$auth', () => {
     let requireAuth: ReturnType<typeof $auth>['requireAuth'];
@@ -41,13 +51,13 @@ describe('$auth', () => {
     });
 
     it('returns session when authenticated', async () => {
-        (client.api.getSession as unknown).mockResolvedValueOnce(mockSession);
+        client.api.getSession.mockResolvedValueOnce(mockSession);
         const session = await requireAuth(event);
         expect(session).toEqual(mockSession);
     });
 
     it('throws error when not authenticated', async () => {
-        (client.api.getSession as unknown).mockResolvedValueOnce(null);
+        client.api.getSession.mockResolvedValueOnce(null);
         await expect(requireAuth(event)).rejects.toMatchObject({
             statusCode: 401,
             statusMessage: 'Unauthorized',
@@ -56,7 +66,7 @@ describe('$auth', () => {
     });
 
     it('calls getSession with correct headers', async () => {
-        (client.api.getSession as unknown).mockResolvedValueOnce(mockSession);
+        client.api.getSession.mockResolvedValueOnce(mockSession);
         await requireAuth(event);
         expect(client.api.getSession).toHaveBeenCalledWith({
             headers: event.headers,

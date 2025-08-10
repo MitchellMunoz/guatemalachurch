@@ -16,3 +16,30 @@ model Post {
   author    User    @relation(fields: [authorId], references: [id])
   authorId  String
 }
+
+model ExpenseType {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  expense     Expense[]
+}
+
+model CategoryType {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  expense     Expense[]
+}
+
+model Expense {
+  id             Int          @id @default(autoincrement())
+  merchant       String
+  date           DateTime
+  categoryTypeId Int
+  categoryType   CategoryType @relation(fields: [categoryTypeId], references: [id])
+  currency       Enum
+  amount         Decimal
+  memo           String
+  expenseTypeId  Int
+  expenseType    ExpenseType  @relation(fields: [expenseTypeId], references: [id])
+}

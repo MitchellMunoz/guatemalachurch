@@ -48,14 +48,15 @@
                         class="min-w-32"
                     />
                 </UFormField>
-                <UFormField label="Amount" class="flex-shrink" :ui="{ container: 'flex items-center gap-2' }">
+                <UFormField label="Currency" class="flex-shrink" :ui="{ container: 'flex items-center gap-2' }">
                     <USelectMenu
                         v-model="currencyType"
                         :search-input="false"
                         :items="[Currency.USD, Currency.GTQ]"
                         class="w-20"
                     />
-
+                </UFormField>
+                <UFormField label="Amount" class="flex-shrink" :ui="{ container: 'flex items-center gap-2' }">
                     <UInputNumber
                         v-model="amount"
                         :ui="{ root: 'w-full' }"

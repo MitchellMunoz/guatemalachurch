@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  const { client } = $auth();
+    const { client } = $auth();
 
-  return client.handler(toWebRequest(event));
+    return client.handler(toWebRequest(event));
 });

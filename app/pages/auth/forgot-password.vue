@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import * as z from 'zod';
-const schema = z.object({
-    email: z.string().email(),
-});
-definePageMeta({
-    layout: 'auth',
-});
+    import * as z from 'zod';
+    const schema = z.object({
+        email: z.string().email(),
+    });
+    definePageMeta({
+        layout: 'auth',
+    });
 </script>
 
 <template>

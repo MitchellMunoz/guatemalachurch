@@ -1,50 +1,45 @@
 <script setup lang="ts">
-definePageMeta({
-    layout: 'default',
-    middleware: 'protected',
-});
-
-useHead({
-    title: 'Dashboard',
-});
-type Post = {
-    id: number;
-    title: string;
-    content: string;
-    authorId: string;
-};
-
-const { data: posts, refresh: refreshPosts } = await useAsyncData('posts', () => $fetch<Post[]>('/api/post'));
-
-const { data, refresh } = await useAsyncData('users', () => $fetch('/api/user'));
-
-const email = ref('');
-const post = ref('');
-const postAuthor = ref('');
-const postTitle = ref('');
-
-const createUser = async (email: string) => {
-    await $fetch('/api/user', { method: 'POST', body: { email } });
-    refresh();
-};
-
-const deleteUser = async (id: string) => {
-    await $fetch(`/api/user`, { method: 'DELETE', query: { id } });
-    refresh();
-};
-
-const createPost = async (content: string, author: string, title: string) => {
-    await $fetch('/api/post', {
-        method: 'POST',
-        body: { content, email: author, title },
+    useHead({
+        title: 'Dashboard',
     });
-    refreshPosts();
-};
+    type Post = {
+        id: number;
+        title: string;
+        content: string;
+        authorId: string;
+    };
 
-const deletePost = async (id: number) => {
-    await $fetch(`/api/post`, { method: 'DELETE', query: { id } });
-    refreshPosts();
-};
+    const { data: posts, refresh: refreshPosts } = await useAsyncData('posts', () => $fetch<Post[]>('/api/post'));
+
+    const { data, refresh } = await useAsyncData('users', () => $fetch('/api/user'));
+
+    const email = ref('');
+    const postMessage = ref('');
+    const postAuthor = ref('');
+    const postTitle = ref('');
+
+    const createUser = async (email: string) => {
+        await $fetch('/api/user', { method: 'POST', body: { email } });
+        refresh();
+    };
+
+    const deleteUser = async (id: string) => {
+        await $fetch(`/api/user`, { method: 'DELETE', query: { id } });
+        refresh();
+    };
+
+    const createPost = async (content: string, author: string, title: string) => {
+        await $fetch('/api/post', {
+            method: 'POST',
+            body: { content, email: author, title },
+        });
+        refreshPosts();
+    };
+
+    const deletePost = async (id: number) => {
+        await $fetch(`/api/post`, { method: 'DELETE', query: { id } });
+        refreshPosts();
+    };
 </script>
 
 <template>
@@ -65,10 +60,10 @@ const deletePost = async (id: number) => {
         </div>
         <div class="mt-8 flex gap-2">
             <UInput v-model="postTitle" placeholder="Title" />
-            <UInput v-model="post" placeholder="Posts" />
+            <UInput v-model="postMessage" placeholder="Posts" />
             <UInput v-model="postAuthor" placeholder="Author" />
 
-            <UButton @click="() => createPost(post, postAuthor, postTitle)"> Create Post </UButton>
+            <UButton @click="() => createPost(postMessage, postAuthor, postTitle)"> Create Post </UButton>
         </div>
         <USeparator class="my-2" />
         <UButton @click="() => refreshPosts()">Refresh</UButton>

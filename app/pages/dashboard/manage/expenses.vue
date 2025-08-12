@@ -3,6 +3,8 @@
     import { useFindManyExpenses } from '#shared/queries';
 
     const overlay = useOverlay();
+    const dialog = useDialog();
+    const toast = useToast();
 
     const addExpenseOverlay = overlay.create(SlideoversAddExpense);
 
@@ -27,8 +29,25 @@
         });
     };
 
-    const onDeleteExpense = (id: number) => {
-        console.log(id);
+    const onDeleteExpense = (id: number, amount: number) => {
+        const amountFormatted = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(amount);
+
+        dialog
+            .confirm({
+                title: `Delete Expense (${amountFormatted})`,
+                description: 'Are you sure you want to delete this expense?',
+            })
+            .onConfirm(() => {
+                toast.add({
+                    title: `Expense deleted ${amountFormatted}`,
+                    description: 'The expense has been deleted.',
+                    color: 'success',
+                });
+            })
+            .open();
     };
 </script>
 <template>
@@ -95,7 +114,7 @@
                             label: 'Delete',
                             icon: 'i-heroicons-trash',
                             color: 'error',
-                            onSelect: () => onDeleteExpense(row.original.id),
+                            onSelect: () => onDeleteExpense(row.original.id, Number(row.original.amount)),
                         },
                     ]"
                 >

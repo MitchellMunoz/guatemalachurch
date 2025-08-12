@@ -41,6 +41,11 @@
                 description: 'Are you sure you want to delete this expense?',
             })
             .onConfirm(() => {
+                /**
+                 * TODO:
+                 * - Create a mutation to delete the expense
+                 */
+
                 toast.add({
                     title: `Expense deleted ${amountFormatted}`,
                     description: 'The expense has been deleted.',

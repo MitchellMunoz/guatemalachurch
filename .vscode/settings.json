@@ -25,5 +25,13 @@
     "tailwindCSS.experimental.classRegex": [["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
     "[prisma]": {
         "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "files.exclude": {
+        "package-lock.json": true,
+        // Dotfiles
+        ".{generated,nuxt,output,nvmrc,prettierignore,npmrc,prettierrc,env.example,gitignore}": true,
+        "node_modules": true,
+        // Config files
+        "{prettier,eslint,vitest}.config.{mjs,ts}": true
     }
 }

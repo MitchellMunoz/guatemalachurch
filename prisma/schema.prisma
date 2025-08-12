@@ -11,6 +11,8 @@ datasource db {
 enum Currency {
   USD
   GTQ
+  ARS
+  RON
 }
 
 enum ExpenseMethod {
@@ -44,8 +46,8 @@ model Expense {
   amount         Decimal
   memo           String?
   upload         String?
-  categoryTypeId Int
-  expenseTypeId  Int
-  categoryType   CategoryType  @relation(fields: [categoryTypeId], references: [id])
-  expenseType    ExpenseType   @relation(fields: [expenseTypeId], references: [id])
+  categoryTypeId Int?
+  expenseTypeId  Int?
+  categoryType   CategoryType? @relation(fields: [categoryTypeId], references: [id])
+  expenseType    ExpenseType?  @relation(fields: [expenseTypeId], references: [id])
 }

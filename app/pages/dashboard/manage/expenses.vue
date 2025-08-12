@@ -1,84 +1,107 @@
 <script setup lang="ts">
-    import { Currency } from '~/composables/useCurrency';
+    import { SlideoversAddExpense } from '#components';
+    import { useFindManyExpenses } from '#shared/queries';
 
-    const { convert } = useCurrency();
+    const overlay = useOverlay();
 
-    const currencyType = ref(Currency.USD);
-    const amount = ref(0);
-    const gtqAmount = ref(0);
-    const file = ref<File | null>(null);
-    const method = ref('Cash');
+    const addExpenseOverlay = overlay.create(SlideoversAddExpense);
 
-    const getConvertedAmount = async (amount: number) => {
-        if (currencyType.value === Currency.USD) {
-            gtqAmount.value = amount;
-            return;
-        }
+    const { data } = useFindManyExpenses({
+        select: {
+            id: true,
+            dateOfPurchase: true,
+            merchant: true,
+            method: true,
+            memo: true,
+            amount: true,
+        },
+    });
 
-        const res = await convert(currencyType.value, Currency.USD, amount);
+    const addExpense = () => {
+        addExpenseOverlay.open();
+    };
 
-        gtqAmount.value = res;
+    const onEditExpense = (id: number) => {
+        addExpenseOverlay.open({
+            id,
+        });
+    };
+
+    const onDeleteExpense = (id: number) => {
+        console.log(id);
     };
 </script>
 <template>
     <div>
-        <div>Manage Expenses</div>
-        <USeparator class="my-4" />
-        <div class="flex flex-col gap-4">
-            <div class="flex flex-col gap-4 md:flex-row">
-                <UFormField label="Merchant" class="flex-1">
-                    <UInput :ui="{ root: 'w-full' }" />
-                </UFormField>
-                <UFormField label="Category" class="flex-shrink">
-                    <USelectMenu :items="['Food', 'Transport', 'Entertainment', 'Other']" class="min-w-48" />
-                </UFormField>
-            </div>
-            <UFormField label="Memo">
-                <UInput :ui="{ root: 'w-full' }" />
-            </UFormField>
-            <div class="flex flex-col gap-4 md:flex-row">
-                <UFormField label="Date" class="flex-1">
-                    <UInput :ui="{ root: 'w-full' }" />
-                </UFormField>
-                <UFormField label="Method" class="flex-shrink">
-                    <USelectMenu
-                        v-model="method"
-                        :search-input="false"
-                        :items="['Cash', 'Card', 'Bank Transfer']"
-                        class="min-w-32"
-                    />
-                </UFormField>
-                <UFormField label="Currency" class="flex-shrink" :ui="{ container: 'flex items-center gap-2' }">
-                    <USelectMenu
-                        v-model="currencyType"
-                        :search-input="false"
-                        :items="[Currency.USD, Currency.GTQ]"
-                        class="w-20"
-                    />
-                </UFormField>
-                <UFormField label="Amount" class="flex-shrink" :ui="{ container: 'flex items-center gap-2' }">
-                    <UInputNumber
-                        v-model="amount"
-                        :ui="{ root: 'w-full' }"
-                        :format-options="{
-                            style: 'currency',
-                            currency: currencyType,
-                            currencyDisplay: 'code',
-                            currencySign: 'standard',
-                        }"
-                    />
-                </UFormField>
-            </div>
-            <UFormField label="Receipt Upload">
-                <UFileUpload v-model="file" class="min-h-48 w-96" />
-            </UFormField>
-            <div>
-                <UButton @click="getConvertedAmount(amount)">Add Expense</UButton>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="font-semibold"> USD </span>
-                <span class="flex items-center"> <UIcon name="lucide:dollar-sign" />{{ gtqAmount.toFixed(2) }} </span>
-            </div>
-        </div>
+        <UDashboardNavbar title="Manage Expenses">
+            <template #right>
+                <UButton icon="i-heroicons-plus" @click="addExpense">Add Expense</UButton>
+            </template>
+        </UDashboardNavbar>
+
+        <UTable
+            :data="data"
+            :columns="[
+                {
+                    accessorKey: 'dateOfPurchase',
+                    header: 'Date of Purchase',
+                },
+                {
+                    accessorKey: 'merchant',
+                    header: 'Merchant',
+                },
+                {
+                    accessorKey: 'method',
+                    header: 'Payment Method',
+                },
+                {
+                    accessorKey: 'amount',
+                    header: 'Amount',
+                },
+                {
+                    accessorKey: 'actions',
+                    header: 'Actions',
+                },
+            ]"
+        >
+            <template #dateOfPurchase-cell="{ row }">
+                {{
+                    new Date(row.original.dateOfPurchase).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                    })
+                }}
+            </template>
+            <template #merchant-cell="{ row }"> {{ row.original.merchant }} </template>
+            <template #amount-cell="{ row }">
+                {{ Number(row.original.amount).toLocaleString('en-US', { style: 'currency', currency: 'USd' }) }}
+            </template>
+            <template #actions-cell="{ row }">
+                <UDropdownMenu
+                    size="sm"
+                    :items="[
+                        {
+                            type: 'label',
+                            label: 'Actions',
+                        },
+                        { type: 'separator' },
+                        {
+                            label: 'Edit',
+                            icon: 'i-heroicons-pencil',
+                            onSelect: () => onEditExpense(row.original.id),
+                        },
+                        {
+                            label: 'Delete',
+                            icon: 'i-heroicons-trash',
+                            color: 'error',
+                            onSelect: () => onDeleteExpense(row.original.id),
+                        },
+                    ]"
+                >
+                    <UButton color="neutral" variant="outline" icon="i-heroicons-ellipsis-vertical" size="sm" />
+                </UDropdownMenu>
+            </template>
+        </UTable>
     </div>
 </template>

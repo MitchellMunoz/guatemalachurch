@@ -99,7 +99,7 @@
             </template>
             <template #merchant-cell="{ row }"> {{ row.original.merchant }} </template>
             <template #amount-cell="{ row }">
-                {{ Number(row.original.amount).toLocaleString('en-US', { style: 'currency', currency: 'USd' }) }}
+                {{ Number(row.original.amount).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) }}
             </template>
             <template #actions-cell="{ row }">
                 <UDropdownMenu

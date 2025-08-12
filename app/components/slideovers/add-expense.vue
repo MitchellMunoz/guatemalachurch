@@ -47,17 +47,7 @@
     }
 
     const submitExpense = async (_event: FormSubmitEvent<AddExpenseForm>) => {
-        await mutateAsync({
-            data: {
-                amount: 12,
-                currency: 'ARS',
-                dateOfPurchase: new Date(),
-                merchant: 'asdf',
-                method: 'CARD',
-            },
-        });
-
-        // Ensure file is less 10MB
+        // Guard: max 10MB
         if (form.file && form.file.size > 10 * 1024 * 1024) {
             toast.add({
                 title: 'File too large',
@@ -67,8 +57,20 @@
             return;
         }
 
-        // await addExpense(event.data);
-        // await $fetch('/api/expense', { method: 'POST', body: event.data });
+        // DateValue -> JS Date
+        const jsDate = _event.data.dateOfPurchase?.toDate(getLocalTimeZone()) ?? new Date();
+
+        //const payload = {
+        await mutateAsync({
+            data: {
+                amount: _event.data.amount,
+                currency: _event.data.currency,
+                dateOfPurchase: jsDate,
+                merchant: _event.data.merchant,
+                method: _event.data.method,
+                memo: _event.data.memo ?? null,
+            },
+        });
     };
 </script>
 
@@ -96,11 +98,15 @@
                     <UInput v-model="form.merchant" :ui="{ root: 'w-full' }" />
                 </UFormField>
                 <UFormField label="Category" class="flex-shrink">
-                    <USelectMenu :items="['Food', 'Transport', 'Entertainment', 'Other']" class="min-w-48" />
+                    <USelectMenu
+                        v-model="form.category"
+                        :items="['Food', 'Transport', 'Entertainment', 'Other']"
+                        class="min-w-48"
+                    />
                 </UFormField>
             </div>
             <UFormField label="Memo">
-                <UInput :ui="{ root: 'w-full' }" />
+                <UInput v-model="form.memo" :ui="{ root: 'w-full' }" />
             </UFormField>
             <div class="flex flex-col gap-4 md:flex-row">
                 <UFormField label="Date" class="flex-1">

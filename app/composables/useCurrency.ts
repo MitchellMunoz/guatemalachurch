@@ -1,9 +1,4 @@
-export enum Currency {
-    USD = 'USD',
-    GTQ = 'GTQ',
-}
-
-const defaultCurrency = ref<Currency>(Currency.USD);
+import type { Currency } from '~~/.generated/prisma/enums';
 
 export const useCurrency = () => {
     const convert = async (from: Currency, to: Currency, amount: number, isBuying: boolean = true) => {
@@ -31,12 +26,7 @@ export const useCurrency = () => {
         return amount * rate;
     };
 
-    const setDefaultCurrency = (currency: Currency) => {
-        defaultCurrency.value = currency;
-    };
-
     return {
         convert,
-        setDefaultCurrency,
     };
 };

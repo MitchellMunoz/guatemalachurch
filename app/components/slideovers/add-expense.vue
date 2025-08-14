@@ -60,7 +60,6 @@
         // DateValue -> JS Date
         const jsDate = _event.data.dateOfPurchase?.toDate(getLocalTimeZone()) ?? new Date();
 
-        //const payload = {
         await mutateAsync({
             data: {
                 amount: _event.data.amount,

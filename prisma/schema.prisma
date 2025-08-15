@@ -51,3 +51,22 @@ model Expense {
   categoryType   CategoryType? @relation(fields: [categoryTypeId], references: [id])
   expenseType    ExpenseType?  @relation(fields: [expenseTypeId], references: [id])
 }
+
+model Registration {
+  id        String    @id @default(cuid())
+  email     String
+  fName     String?
+  lName     String?
+  dob       DateTime?
+  street    String?
+  city      String?
+  state     String?
+  postal    String?
+  phone     String?
+  cName     String? // Church Name
+  pName     String? // Primary Contact
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([email])
+}

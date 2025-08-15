@@ -10,6 +10,7 @@
                 { label: 'Contact', to: '/contact' },
                 { label: 'Projects', to: '/projects' },
                 { label: 'Blog', to: '/blog' },
+                { label: 'Trips', to: '/trips' },
             ]"
         />
         <template #right>

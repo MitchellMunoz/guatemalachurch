@@ -17,7 +17,7 @@ export const useCreateTrip = defineMutation(() => {
     });
 });
 
-// Delete Trip
+// Delete Trip obviously doesnt work because api file requests to .post.ts
 export const useDeleteTrip = defineMutation(() => {
     const queryCache = useQueryCache();
 

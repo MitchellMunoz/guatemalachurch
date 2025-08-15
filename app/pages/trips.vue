@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import { useToast } from '#imports'; // ensure this import
-    import { useCreateRegistration } from '#shared/queries/trip-registration';
+    import { useCreateTrip } from '#shared/queries/trip-registration';
     import type { FormError, FormSubmitEvent } from '@nuxt/ui';
 
-    const createRegistration = useCreateRegistration();
+    const createTrip = useCreateTrip();
     const toast = useToast();
 
     const state = reactive({
@@ -46,12 +46,12 @@
                 },
             };
 
-            const res = await createRegistration.mutateAsync(args);
-            console.log('Registration created:', res);
+            const res = await createTrip.mutateAsync(args);
+            console.log('Trip created:', res);
 
             toast.add({ title: 'Success', description: 'Registration saved.', color: 'success' });
         } catch (err) {
-            console.error('Create registration failed:', err);
+            console.error('Create trip failed:', err);
             toast.add({ title: 'Error', description: 'Failed to save registration.', color: 'error' });
         }
     }
@@ -195,7 +195,7 @@
 
                 <div class="flex flex-col gap-4 md:flex-row">
                     <UButton color="primary" variant="ghost" type="button">Save draft</UButton>
-                    <UButton :loading="createRegistration.isLoading.value" type="submit">Submit</UButton>
+                    <UButton :loading="createTrip.isLoading.value" type="submit">Submit</UButton>
                 </div>
             </div>
         </UForm>

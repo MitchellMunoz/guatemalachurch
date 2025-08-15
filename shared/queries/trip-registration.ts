@@ -2,32 +2,32 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada';
 import type { Prisma } from '~~/.generated/prisma/client';
 
-// Create Registration
-export const useCreateRegistration = defineMutation(() => {
+// Create Trip
+export const useCreateTrip = defineMutation(() => {
     const queryCache = useQueryCache();
 
     return useMutation({
-        mutation: (data: Prisma.RegistrationCreateArgs) => {
+        mutation: (data: Prisma.TripsCreateArgs) => {
             return $fetch('/api/model/trip-registration', {
                 method: 'POST',
                 params: { q: JSON.stringify(data) },
             });
         },
-        onSettled: () => queryCache.invalidateQueries({ key: ['Registration'] }),
+        onSettled: () => queryCache.invalidateQueries({ key: ['Trips'] }),
     });
 });
 
-// Delete Registration
-export const useDeleteRegistration = defineMutation(() => {
+// Delete Trip
+export const useDeleteTrip = defineMutation(() => {
     const queryCache = useQueryCache();
 
     return useMutation({
-        mutation: (data: Prisma.RegistrationDeleteArgs) => {
+        mutation: (data: Prisma.TripsDeleteArgs) => {
             return $fetch('/api/model/trip-registration', {
                 method: 'DELETE',
                 params: { q: JSON.stringify(data) },
             });
         },
-        onSettled: () => queryCache.invalidateQueries({ key: ['Registration'] }),
+        onSettled: () => queryCache.invalidateQueries({ key: ['Trips'] }),
     });
 });

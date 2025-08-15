@@ -6,12 +6,13 @@ export default defineEventHandler(async (event) => {
     const query = await getValidatedQuery(event, QuerySchema.parse);
     const parsedQuery = JSON.parse(query.q);
 
-    switch (event.method) {
-        case 'POST':
-            return await $database.trips.create(parsedQuery); // ✅ Trips model
-        case 'DELETE':
-            return await $database.trips.delete(parsedQuery); // ✅ Trips model
-        default:
-            throw createError({ statusCode: 405, statusMessage: 'Method not allowed' });
-    }
+    return await $database.trips.create(parsedQuery);
+    // switch (event.method) {
+    //     case 'POST':
+    //         return await $database.trips.create(parsedQuery);
+    //     case 'DELETE':
+    //         return await $database.trips.delete(parsedQuery);
+    //     default:
+    //         throw createError({ statusCode: 405, statusMessage: 'Method not allowed' });
+    // }
 });

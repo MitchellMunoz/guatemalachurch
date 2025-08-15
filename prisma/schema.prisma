@@ -21,6 +21,11 @@ enum ExpenseMethod {
   TRANSFER
 }
 
+enum RegistrationType {
+  INDIVIDUAL
+  CHURCH
+}
+
 model ExpenseType {
   id          Int       @id @default(autoincrement())
   name        String
@@ -52,21 +57,40 @@ model Expense {
   expenseType    ExpenseType?  @relation(fields: [expenseTypeId], references: [id])
 }
 
-model Registration {
-  id        String    @id @default(cuid())
-  email     String
-  fName     String?
-  lName     String?
-  dob       DateTime?
-  street    String?
-  city      String?
-  state     String?
-  postal    String?
-  phone     String?
-  cName     String? // Church Name
-  pName     String? // Primary Contact
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+model Profile {
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  email             String
+  fName             String?
+  lName             String?
+  churchName        String?
+  dob               DateTime?
+  street            String?
+  city              String?
+  state             String?
+  postal            String?
+  phone             String?
+  tripRegistrations TripRegistration[] @relation("ProfileTripRegistration")
+}
 
-  @@index([email])
+model TripRegistration {
+  id               String           @id @default(cuid())
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  profiles         Profile[]        @relation("ProfileTripRegistration")
+  registrationType RegistrationType @default(INDIVIDUAL)
+  tripId           String
+  trip             Trip             @relation(fields: [tripId], references: [id])
+}
+
+model Trip {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  startDate DateTime
+  endDate   DateTime
+  groupSize Int
+
+  registrations TripRegistration[]
 }

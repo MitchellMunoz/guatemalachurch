@@ -18,6 +18,7 @@
         "format:check": "prettier --check .",
         "db:generate": "prisma generate --config prisma.config.ts",
         "db:migrate": "prisma migrate dev --config prisma.config.ts",
+        "db:reset": "prisma migrate reset --config prisma.config.ts",
         "db:studio": "prisma studio --config prisma.config.ts",
         "typecheck": "nuxt typecheck"
     },

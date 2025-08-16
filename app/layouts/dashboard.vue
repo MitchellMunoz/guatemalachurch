@@ -12,6 +12,7 @@
                 :items="[
                     { label: 'Manage Teams', to: '/dashboard/manage/teams' },
                     { label: 'Manage Expenses', to: '/dashboard/manage/expenses' },
+                    { label: 'Manage Trips', to: '/dashboard/manage/trips' },
                 ]"
             />
             <template #right>

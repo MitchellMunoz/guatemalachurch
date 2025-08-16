@@ -8,7 +8,7 @@
         {
             icon: 'i-heroicons-heart',
             title: 'Community Impact',
-            desc: 'Support projects that meet real needs in Guatemala.',
+            desc: 'Support projects that empower the local church to meet needs across Guatemala.',
         },
         {
             icon: 'i-heroicons-globe-alt',

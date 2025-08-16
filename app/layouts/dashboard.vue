@@ -38,5 +38,6 @@
                 <slot />
             </UContainer>
         </UMain>
+        <SiteFooter />
     </div>
 </template>

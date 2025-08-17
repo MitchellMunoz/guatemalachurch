@@ -3,7 +3,27 @@
         title: 'Guatemala Church',
         description: 'Serving communities through missions, projects, and compassion.',
     });
-
+    definePageMeta({
+        layout: 'brochure',
+        splash: {
+            contentWidth: 'xl',
+            src: '/images/church.jpeg',
+            alt: 'Sunrise over desert ridge',
+            eyebrow: 'Guatemala Church',
+            title: 'Serving With Love. Changing Lives.',
+            subtitle: 'Join us as we build projects, lead trips, and support communities across Guatemala.',
+            align: 'center',
+            height: 'hero',
+            overlay: true,
+            overlayOpacity: 0.45,
+            bottomFade: true,
+            // Prefer links here (the layout will call `navigateTo`)
+            actions: [
+                { label: 'Get Involved', to: '/auth/sign-up' },
+                { label: 'Learn More', to: '/projects' },
+            ],
+        },
+    });
     const features = [
         {
             icon: 'i-heroicons-heart',

@@ -1,7 +1,10 @@
 <script setup lang="ts">
     import { useToast } from '#imports'; // ensure this import
     import { useCreateRegistration } from '#shared/queries/trip-registration';
+    import { US_STATES } from '@/constants/us-states';
     import type { FormError, FormSubmitEvent } from '@nuxt/ui';
+    import BaseInput from '~/components/base-input.vue';
+    import PostalInput from '~/components/postal-input.vue';
 
     const { mutateAsync, isLoading } = useCreateRegistration();
     const toast = useToast();
@@ -91,22 +94,24 @@
                         </template>
                         <div class="flex flex-col md:flex-row md:gap-6">
                             <UFormField :label="isChurch ? 'Church name' : 'First name'" name="fname" class="md:flex-1">
-                                <UInput v-model="state.fName" class="w-full" />
+                                <BaseInput v-model="state.fName" class="w-full" />
                             </UFormField>
                             <UFormField
                                 :label="isChurch ? 'Primary Contact' : 'Last Name'"
                                 name="lname"
                                 class="md:flex-1"
                             >
-                                <UInput v-model="state.lName" class="w-full" />
+                                <BaseInput v-model="state.lName" class="w-full" />
                             </UFormField>
                         </div>
+
                         <div class="flex flex-col md:flex-row md:gap-6">
                             <UFormField label="Email" name="email" class="md:flex-1">
-                                <UInput v-model="state.email" type="email" class="w-full" />
+                                <BaseInput v-model="state.email" label="Email" type="email" />
                             </UFormField>
+
                             <UFormField label="Mobile phone" name="phone" class="md:flex-1">
-                                <UInput v-model="state.phone" type="tel" class="w-full" />
+                                <BaseInput v-model="state.phone" type="tel" class="w-full" />
                             </UFormField>
                         </div>
                     </UCard>
@@ -117,21 +122,33 @@
                         </template>
                         <div class="flex flex-col md:flex-row md:gap-6">
                             <UFormField label="Street address" name="street" class="md:flex-1">
-                                <UInput v-model="state.street" class="w-full" />
+                                <BaseInput v-model="state.street" class="w-full" />
                             </UFormField>
                             <UFormField label="City" name="city" class="md:flex-1">
-                                <UInput v-model="state.city" class="w-full" />
+                                <BaseInput v-model="state.city" class="w-full" />
                             </UFormField>
                         </div>
                         <div class="flex flex-col gap-4 md:flex-row md:gap-6">
                             <UFormField label="State" name="region" class="md:flex-1">
-                                <UInput v-model="state.state" class="w-full" />
+                                <BaseInput
+                                    v-model="state.state"
+                                    :select="true"
+                                    :options="[...US_STATES]"
+                                    placeholder="Select state"
+                                />
                             </UFormField>
                             <UFormField label="Postal code" name="postal" class="md:flex-1">
-                                <UInput v-model="state.postal" class="w-full" />
+                                <PostalInput
+                                    v-model="state.postal"
+                                    label="12345"
+                                    class="w-full"
+                                    digits-only
+                                    :max-length="5"
+                                    inputmode="numeric"
+                                />
                             </UFormField>
                             <UFormField label="Date of birth" name="dob" class="md:flex-1">
-                                <UInput v-model="state.dob" type="date" class="w-full" />
+                                <BaseInput v-model="state.dob" type="date" class="w-full" />
                             </UFormField>
                         </div>
                     </UCard>

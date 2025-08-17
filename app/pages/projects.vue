@@ -45,7 +45,11 @@
                     description="Maintain wells and expand access to clean water for villages in need."
                 >
                     <template #leading>
-                        <img src="/images/water.png" alt="" class="h-40 w-full rounded-md object-cover" />
+                        <img
+                            src="/images/water.png"
+                            alt=""
+                            class="h-40 w-full rounded-md object-cover object-[60%_35%]"
+                        />
                     </template>
                     <template #footer>
                         <UButton to="/contact" color="primary">Get involved</UButton>

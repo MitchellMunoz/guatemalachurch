@@ -7,11 +7,11 @@
     });
 
     const schema = z.object({
-        email: z.string().email(),
-        password: z.string().min(6),
-        confirmPassword: z.string().min(6),
-        firstName: z.string().min(1),
-        lastName: z.string().min(1),
+        email: z.email('You Must Enter a Valid Email.'),
+        password: z.string('You Must Enter a Password.').min(6, { message: 'Must be at least 6 characters' }),
+        confirmPassword: z.string('You Must Enter a Password.').min(6, { message: 'Must be at least 6 characters' }),
+        firstName: z.string('You Must Enter a First Name.').min(1, { message: 'You Must Enter a First Name.' }),
+        lastName: z.string('You Must Enter a Last Name.').min(1, { message: 'You Must Enter a Last Name.' }),
     });
 
     const { signUp } = useAuth();

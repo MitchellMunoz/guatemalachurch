@@ -7,8 +7,8 @@
     });
 
     const schema = z.object({
-        email: z.string().email(),
-        password: z.string().min(6),
+        email: z.email('You Must Enter a Valid Email'),
+        password: z.string('You Must Enter a Password.').min(6, { message: 'Must be at least 6 characters' }),
     });
 
     const { signIn } = useAuth();

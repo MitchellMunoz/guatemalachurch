@@ -1,3 +1,7 @@
+# Content module
+run npx nuxt module add content
+
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.

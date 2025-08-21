@@ -3,43 +3,22 @@
 </script>
 
 <template>
-    <div class="container">
-        <section class="articles">
-            <div class="column is-8 is-offset-2">
-                <div v-for="blog in page" :key="blog.path" class="card article">
-                    <NuxtLink :to="blog.path">
-                        <section class="blog-post-card card article">
-                            <div class="media">
-                                <div class="media-content has-text-centered">
-                                    <h3 class="title article-title has-text-weight-bold">
-                                        {{ blog.title }}
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="card-content">
-                                <div class="content article-body is-size-5">
-                                    {{ blog.description }}
-                                </div>
-                            </div>
-                        </section>
-                    </NuxtLink>
-                </div>
+    <div class="gap mx-auto mt-8 max-w-3xl px-4">
+        <section class="flex flex-col gap-6">
+            <div
+                v-for="blog in page"
+                :key="blog.path"
+                class="rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+            >
+                <NuxtLink :to="blog.path" class="block p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        {{ blog.title }}
+                    </h3>
+                    <p v-if="blog.description" class="mt-2 text-gray-600 dark:text-gray-300">
+                        {{ blog.description }}
+                    </p>
+                </NuxtLink>
             </div>
         </section>
     </div>
 </template>
-
-<style>
-    .blog-post-card {
-        padding-top: 2.5rem;
-        padding-bottom: 3rem;
-    }
-
-    .blog-post-card .card-content {
-        padding: 1rem;
-    }
-
-    .blog-post-card .title {
-        margin-bottom: 1rem;
-    }
-</style>

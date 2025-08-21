@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { useBoardStore } from '../stores/boardStore';
+    import { useBoardStore } from '../../stores/boardStore';
     const boardStore = useBoardStore();
 </script>
 

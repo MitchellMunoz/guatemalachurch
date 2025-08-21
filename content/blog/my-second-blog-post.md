@@ -1,6 +1,7 @@
 ---
 title: My Second Blog
-description: A short intro to my first post
+author: Mitch
+description: A short intro to my second post
 date: 2025-08-20
 ---
 

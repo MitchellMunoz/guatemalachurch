@@ -1,5 +1,6 @@
 ---
 title: My First Blog
+author: Mitch
 description: A short intro to my first post
 date: 2025-08-19
 ---

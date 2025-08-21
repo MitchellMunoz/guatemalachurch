@@ -16,8 +16,10 @@
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                         {{ blog.title }}
                     </h3>
-                    <p v-if="blog.dates" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        {{ formatDate(blog.dates) }}
+                    <p v-if="blog.author" class="mt-1 text-sm text-gray-500 dark:text-gray-400">By {{ blog.author }}</p>
+
+                    <p v-if="blog.date" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        {{ formatDate(blog.date) }}
                     </p>
                     <p v-if="blog.description" class="mt-2 text-gray-600 dark:text-gray-300">
                         {{ blog.description }}

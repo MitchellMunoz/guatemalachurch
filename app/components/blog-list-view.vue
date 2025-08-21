@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    // Fetch the list of blog posts and expose as blogPostList
     const { data: page } = await useAsyncData('BlogPostList', () => queryCollection('content').all());
 </script>
 

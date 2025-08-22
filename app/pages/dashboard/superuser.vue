@@ -45,8 +45,8 @@
 </script>
 
 <template>
-    <div class="board-wrapper">
-        <main class="board">
+    <div class="h-full overflow-auto p-4">
+        <main class="flex flex-row items-start">
             <UContainer>
                 <div>Sample User management to demonstrate Prisma</div>
                 <USeparator />

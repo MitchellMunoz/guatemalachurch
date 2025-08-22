@@ -9,6 +9,9 @@
     const { mutateAsync, isLoading } = useCreateRegistration();
     const toast = useToast();
 
+    const props = defineProps<{ mode: 'individual' | 'church' }>();
+    const isChurch = computed(() => props.mode === 'church');
+
     const state = reactive({
         email: undefined as string | undefined,
         fName: undefined as string | undefined,
@@ -66,25 +69,12 @@
             toast.add({ title: 'Error', description: 'Failed to save registration.', color: 'error' });
         }
     }
-
-    const selectedTab = ref('individual');
-
-    const isChurch = computed(() => {
-        return selectedTab.value === 'church';
-    });
 </script>
 
 <template>
     <div>
-        <div class="flex justify-end pt-8">
-            <UTabs
-                v-model="selectedTab"
-                :items="[
-                    { value: 'individual', label: 'Individual' },
-                    { value: 'church', label: 'Church' },
-                ]"
-            />
-        </div>
+        <div class="flex justify-end pt-8"></div>
+
         <div class="flex flex-col gap-6 pt-8">
             <UForm :state="state" :validate="validate" @submit="onSubmit">
                 <div class="flex flex-col gap-6 md:flex-col lg:flex-col">

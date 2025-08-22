@@ -8,12 +8,13 @@
     });
 
     const { user } = useAuth();
+    const { confirmNavigate } = useDialog();
 
     type ChecklistItem = { id: string; label: string; done: boolean };
     const checklist = ref<ChecklistItem[]>([
         { id: 'forms', label: 'Complete registration form', done: false },
         { id: 'deposit', label: 'Pay deposit', done: false },
-        { id: 'passport', label: 'Upload passport', done: false },
+        { id: 'passport', label: 'Has valid passport', done: false },
     ]);
 
     const toggleChecklist = (id: string) => {
@@ -31,6 +32,14 @@
     };
 
     const trips = ref<TripCard[]>([]);
+
+    const passportExpiration = ref('');
+    const passportCountry = ref('');
+
+    const hasAllergies = ref(false);
+    const allergyDetails = ref('');
+    const takesMedications = ref(false);
+    const medicationDetails = ref('');
 
     onMounted(() => {
         // Placeholder data until trip endpoints are wired
@@ -65,7 +74,9 @@
                             <p class="text-sm text-gray-500">{{ t.startDate }} → {{ t.endDate }}</p>
                         </div>
                     </div>
-                    <div v-else class="text-sm text-gray-500">No trips yet.</div>
+                    <div v-else class="flex items-center justify-between"></div>
+                    <div class="text-sm text-gray-500">No trips yet.</div>
+                    <UButton size="sm" @click="navigateTo('/dashboard/trip-registration')"> Register </UButton>
                 </template>
             </UCard>
 
@@ -82,12 +93,54 @@
         </div>
 
         <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+            <UCard title="Health">
+                <template #default>
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2">
+                                <UCheckbox v-model="hasAllergies" />
+                                <span>Allergy concerns</span>
+                            </label>
+                            <UTextarea
+                                v-if="hasAllergies"
+                                v-model="allergyDetails"
+                                :rows="3"
+                                placeholder="List any allergies, reactions, and severity"
+                            />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2">
+                                <UCheckbox v-model="takesMedications" />
+                                <span>Medication concerns</span>
+                            </label>
+                            <UTextarea
+                                v-if="takesMedications"
+                                v-model="medicationDetails"
+                                :rows="3"
+                                placeholder="List current medications, dosage, and schedule"
+                            />
+                        </div>
+                    </div>
+                </template>
+            </UCard>
+
             <UCard title="Documents">
                 <template #default>
-                    <div class="flex items-center gap-2">
-                        <UButton size="sm" variant="soft">Upload Passport</UButton>
-                        <UButton size="sm" variant="soft">Waiver</UButton>
-                        <UButton size="sm" variant="soft">Insurance</UButton>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <div class="space-y-1">
+                                <label class="text-sm text-gray-600">Expiration date</label>
+                                <UInput v-model="passportExpiration" type="date" placeholder="YYYY-MM-DD" />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-sm text-gray-600">Issuing country</label>
+                                <UInput v-model="passportCountry" placeholder="e.g., USA" />
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <UButton size="sm" variant="soft">Waiver</UButton>
+                            <UButton size="sm" variant="soft">Insurance</UButton>
+                        </div>
                     </div>
                 </template>
             </UCard>
@@ -106,7 +159,9 @@
                 <template #default>
                     <div class="space-y-2 text-sm">
                         <div>Questions? Contact your coordinator.</div>
-                        <UButton size="sm" variant="soft">Message Coordinator</UButton>
+                        <UButton size="sm" variant="soft" @click="() => confirmNavigate('/contact')"
+                            >Message Coordinator</UButton
+                        >
                     </div>
                 </template>
             </UCard>

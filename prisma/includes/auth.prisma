@@ -1,7 +1,7 @@
 enum UserRole {
   SUPERUSER
   ADMIN
-  COORDINATOR // Pastor of the church
+  COORDINATOR // Pastor of the church or US Trip Leader 
   PARTICIPANT
 }
 

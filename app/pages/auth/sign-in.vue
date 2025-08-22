@@ -22,7 +22,9 @@
         });
 
         if (success) {
-            navigateTo('/dashboard');
+            const { user } = useAuth();
+            const role = user.value?.role?.toLowerCase() || 'participant';
+            navigateTo(`/dashboard/${role}`);
         }
     };
 </script>

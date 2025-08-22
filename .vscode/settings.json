@@ -33,5 +33,7 @@
         "node_modules": true,
         // Config files
         "{prettier,eslint,vitest}.config.{mjs,ts}": true
-    }
+    },
+    "window.openFoldersInNewWindow": "on",
+    "window.openFilesInNewWindow": "on"
 }

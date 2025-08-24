@@ -15,17 +15,14 @@
         state: undefined as string | undefined,
         postal: undefined as string | undefined,
         phone: undefined as string | undefined,
-        dob: undefined as string | undefined,
+        dob: undefined as string | undefined, // input type="date" gives 'YYYY-MM-DD'
         cName: undefined as string | undefined,
         pName: undefined as string | undefined,
-        tripId: undefined as string | undefined,
     });
 
     const validate = (s: typeof state): FormError[] => {
         const errors: FormError[] = [];
         if (!s.email) errors.push({ name: 'email', message: 'Required' });
-        if (!isChurch.value && !s.tripId) errors.push({ name: 'tripId', message: 'Trip ID required' });
-
         return errors;
     };
 
@@ -36,15 +33,13 @@
             const res = await mutateAsync({
                 data: {
                     registrationType: isChurch.value ? 'CHURCH' : 'INDIVIDUAL',
-                    trip: isChurch.value
-                        ? {
-                              create: {
-                                  startDate: new Date('2025-08-15'),
-                                  endDate: new Date('2025-08-20'),
-                                  groupSize: 10,
-                              },
-                          }
-                        : { connect: { id: state.tripId!.trim() } }, // NEW
+                    trip: {
+                        create: {
+                            startDate: new Date('2025-08-15'),
+                            endDate: new Date('2025-08-20'),
+                            groupSize: 10,
+                        },
+                    },
                     profiles: {
                         create: {
                             email: state.email!,

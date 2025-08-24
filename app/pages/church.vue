@@ -2,30 +2,39 @@
     import { useToast } from '#imports'; // ensure this import
     import { useCreateRegistration } from '#shared/queries/trip-registration';
     import type { FormError, FormSubmitEvent } from '@nuxt/ui';
+    import type { UserRole } from '~~/.generated/prisma/client';
 
     const { mutateAsync, isLoading } = useCreateRegistration();
     const toast = useToast();
 
     const state = reactive({
         email: undefined as string | undefined,
-        fName: undefined as string | undefined,
-        lName: undefined as string | undefined,
+        churchName: undefined as string | undefined,
+        firstName: undefined as string | undefined,
+        title: undefined as string | undefined,
+        lastName: undefined as string | undefined,
         street: undefined as string | undefined,
         city: undefined as string | undefined,
         state: undefined as string | undefined,
         postal: undefined as string | undefined,
         phone: undefined as string | undefined,
         dob: undefined as string | undefined,
-        cName: undefined as string | undefined,
-        pName: undefined as string | undefined,
+        startDate: undefined as string | undefined,
+        endDate: undefined as string | undefined,
+        groupSize: undefined as number | undefined,
+        location: undefined as string | undefined,
         tripId: undefined as string | undefined,
     });
+    const { user } = useAuth();
+    const u = user.value!;
+    state.email ??= u.email ?? undefined;
+    const [first, ...rest] = (u.name ?? '').trim().split(' ');
+    state.firstName ??= first || undefined;
+    state.lastName ??= rest.join(' ') || undefined;
 
     const validate = (s: typeof state): FormError[] => {
         const errors: FormError[] = [];
         if (!s.email) errors.push({ name: 'email', message: 'Required' });
-        if (!isChurch.value && !s.tripId) errors.push({ name: 'tripId', message: 'Trip ID required' });
-
         return errors;
     };
 
@@ -35,23 +44,26 @@
         try {
             const res = await mutateAsync({
                 data: {
-                    registrationType: isChurch.value ? 'CHURCH' : 'INDIVIDUAL',
-                    trip: isChurch.value
-                        ? {
-                              create: {
-                                  startDate: new Date('2025-08-15'),
-                                  endDate: new Date('2025-08-20'),
-                                  groupSize: 10,
-                              },
-                          }
-                        : { connect: { id: state.tripId!.trim() } }, // NEW
+                    registrationType: 'CHURCH',
+                    trip: {
+                        create: {
+                            title: state.title!,
+                            tripId: state.tripId!,
+                            createdByRole: u.role as UserRole,
+                            createdByEmail: u.email,
+                            startDate: new Date('state.startDate!'),
+                            endDate: new Date('state.endDate!'),
+                            groupSize: state.groupSize!,
+                        },
+                    },
                     profiles: {
                         create: {
                             email: state.email!,
                             city: state.city,
                             dob: toDateOrUndef(state.dob),
-                            fName: state.fName,
-                            lName: state.lName,
+                            churchName: state.churchName,
+                            firstName: state.firstName,
+                            lastName: state.lastName,
                             phone: state.phone,
                             postal: state.postal,
                             state: state.state,
@@ -68,25 +80,11 @@
             toast.add({ title: 'Error', description: 'Failed to save registration.', color: 'error' });
         }
     }
-
-    const selectedTab = ref('individual');
-
-    const isChurch = computed(() => {
-        return selectedTab.value === 'church';
-    });
 </script>
 
 <template>
     <div>
-        <div class="flex justify-end pt-8">
-            <UTabs
-                v-model="selectedTab"
-                :items="[
-                    { value: 'individual', label: 'Individual' },
-                    { value: 'church', label: 'Church' },
-                ]"
-            />
-        </div>
+        <div class="flex justify-end pt-8"></div>
         <div class="flex flex-col gap-6 pt-8">
             <UForm :state="state" :validate="validate" @submit="onSubmit">
                 <div class="flex flex-col gap-6 md:flex-col lg:flex-col">
@@ -95,15 +93,14 @@
                             <h2 class="text-lg">Your information</h2>
                         </template>
                         <div class="flex flex-col md:flex-row md:gap-6">
-                            <UFormField :label="isChurch ? 'Church name' : 'First name'" name="fname" class="md:flex-1">
-                                <UInput v-model="state.fName" class="w-full" />
+                            <UFormField label="Church name" name="churchname" class="md:flex-1">
+                                <UInput v-model="state.churchName" class="w-full" />
                             </UFormField>
-                            <UFormField
-                                :label="isChurch ? 'Primary Contact' : 'Last Name'"
-                                name="lname"
-                                class="md:flex-1"
-                            >
-                                <UInput v-model="state.lName" class="w-full" />
+                            <UFormField label="First Name" name="firstname" class="md:flex-1">
+                                <UInput v-model="state.firstName" class="w-full" />
+                            </UFormField>
+                            <UFormField label="Last Name" name="lastname" class="md:flex-1">
+                                <UInput v-model="state.lastName" class="w-full" />
                             </UFormField>
                         </div>
                         <div class="flex flex-col md:flex-row md:gap-6">

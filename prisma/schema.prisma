@@ -15,6 +15,13 @@ enum Currency {
   RON
 }
 
+enum UserRole {
+  SUPERUSER
+  ADMIN
+  COORDINATOR // Pastor of the church or US Trip Leader 
+  PARTICIPANT
+}
+
 enum ExpenseMethod {
   CASH
   CARD
@@ -62,8 +69,8 @@ model Profile {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   email             String
-  fName             String?
-  lName             String?
+  firstName         String?
+  lastName          String?
   churchName        String?
   dob               DateTime?
   street            String?
@@ -74,23 +81,55 @@ model Profile {
   tripRegistrations TripRegistration[] @relation("ProfileTripRegistration")
 }
 
-model TripRegistration {
-  id               String           @id @default(cuid())
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  profiles         Profile[]        @relation("ProfileTripRegistration")
-  registrationType RegistrationType @default(INDIVIDUAL)
-  tripId           String
-  trip             Trip             @relation(fields: [tripId], references: [id])
-}
-
+//This is the TRIP Itself created by the COORDINATOR/ADMIN/SUPERUSER
 model Trip {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  startDate DateTime
-  endDate   DateTime
-  groupSize Int
+
+  title       String
+  churchName  String?
+  location    String?
+  startDate   DateTime
+  endDate     DateTime
+  groupSize   Int
+  description String?
+  tripId      String
+
+  createdByRole  UserRole // snapshot of the creator’s role
+  createdByEmail String
+  createdBy      User     @relation("TripCreatedBy", fields: [createdByEmail], references: [email], onDelete: Cascade)
 
   registrations TripRegistration[]
+
+  @@index([createdByEmail])
+  @@index([createdByRole])
+}
+
+//This is the participant who is registering for the trip
+model TripRegistration {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  registrationType RegistrationType @default(INDIVIDUAL)
+
+  tripId String
+  trip   Trip   @relation(fields: [tripId], references: [id])
+
+  registrantId String
+  registrant   User   @relation("TripRegistrant", fields: [registrantId], references: [id], onDelete: Cascade)
+
+  primaryContact String
+  dob            DateTime?
+  street         String?
+  city           String?
+  state          String?
+  postal         String?
+  phone          String?
+
+  profiles Profile[] @relation("ProfileTripRegistration")
+
+  @@index([tripId])
+  @@index([registrantId])
 }

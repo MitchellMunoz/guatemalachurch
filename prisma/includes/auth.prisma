@@ -3,6 +3,7 @@ model User {
   name          String?
   firstName     String?
   lastName      String?
+  churchName    String?
   email         String
   emailVerified Boolean
   image         String?

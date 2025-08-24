@@ -87,23 +87,20 @@ model Trip {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title       String
-  churchName  String?
-  location    String?
-  startDate   DateTime
-  endDate     DateTime
-  groupSize   Int
-  description String?
-  tripId      String
-
-  createdByRole  UserRole // snapshot of the creator’s role
+  title          String
+  churchName     String?
+  location       String?
+  startDate      DateTime
+  endDate        DateTime
+  groupSize      Int?
+  description    String?
+  tripId         String
   createdByEmail String
   createdBy      User     @relation("TripCreatedBy", fields: [createdByEmail], references: [email], onDelete: Cascade)
 
   registrations TripRegistration[]
 
   @@index([createdByEmail])
-  @@index([createdByRole])
 }
 
 //This is the participant who is registering for the trip

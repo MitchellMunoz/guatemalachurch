@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import boardData from '../.data/board.json';
+
+const boardData = {};
 
 export const useBoardStore = defineStore('boardStore', () => {
     const board = ref(boardData);

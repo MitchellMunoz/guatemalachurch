@@ -78,7 +78,7 @@
 </script>
 
 <template>
-    <div>
+    <div class="p-6">
         <div class="mb-6">
             <h2 class="text-xl font-semibold">Welcome, {{ user?.name || 'Coordinator' }}</h2>
             <p class="text-sm text-gray-500">Manage trips, teams, registrations, and expenses.</p>
@@ -134,8 +134,8 @@
                     <div v-else class="text-sm text-gray-500">No trips yet.</div>
 
                     <div class="mt-4 flex items-center gap-2">
-                        <UButton size="sm" @click="navigateTo('/dashboard/trip-registration')">
-                            Register Church
+                        <UButton size="sm" @click="navigateTo('/dashboard/church-registration')">
+                            Register Trip
                         </UButton>
                         <UButton size="sm" variant="soft" @click="navigateTo('/dashboard/manage/trips')">
                             Manage Trips

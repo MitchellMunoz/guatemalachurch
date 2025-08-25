@@ -40,7 +40,15 @@ yarn dev
 
 # bun
 bun run dev
+
 ```
+
+## Prisma 
+# The Better Auth CLI allows you to generate or migrate your database schema 
+
+npx @better-auth/cli@latest generate
+
+
 
 ## Production
 
@@ -94,3 +102,6 @@ If ESLint errors don’t show in vscode: View → Output → ESLint and ensure y
 If you see console errors fron the ESLint output `Cannot find native binding … unrs-resolver":`
 
 - Try running `npm rebuild unrs-resolver --build-from-source` and God speed.
+
+
+

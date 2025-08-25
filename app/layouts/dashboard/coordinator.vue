@@ -13,7 +13,7 @@
 
             <template #right>
                 <div class="flex items-center gap-3 text-sm">
-                    <h4>{{ user?.name }}</h4>
+                    <h4>{{ user?.name }} - ({{ user?.role }})</h4>
                     <UButton
                         color="neutral"
                         variant="subtle"

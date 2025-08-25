@@ -1,11 +1,25 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { customSession } from 'better-auth/plugins';
 import type { H3Event } from 'h3';
 
 const client = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    plugins: [
+        customSession(async ({ user, session }) => {
+            const { role } = await $database.user.findFirstOrThrow({ where: { id: user.id } });
+
+            return {
+                user: {
+                    ...user,
+                    role,
+                },
+                session,
+            };
+        }),
+    ],
     database: prismaAdapter($database, { provider: 'sqlite' }),
 });
 

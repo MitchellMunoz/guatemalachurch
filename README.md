@@ -46,8 +46,9 @@ bun run dev
 ## Prisma 
 The Better Auth CLI allows you to generate or migrate your database schema 
 
+```bash
 npx @better-auth/cli@latest generate
-
+```
 
 
 ## Production

@@ -17,7 +17,7 @@
     });
 
     type TripCard = {
-        id: string;
+        code: string;
         name: string;
         startDate: string;
         endDate: string;
@@ -26,7 +26,7 @@
 
     const trips = computed<TripCard[]>(() =>
         (tripRows.value ?? []).map((t) => ({
-            id: t.id,
+            code: t.code,
             name: t.title,
             startDate: new Date(t.startDate as unknown as string).toISOString().slice(0, 10),
             endDate: new Date(t.endDate as unknown as string).toISOString().slice(0, 10),
@@ -84,6 +84,7 @@
 
 <template>
     <div>
+        Preguntar a ChatGPT
         <div class="p-6">
             <div class="mb-6">
                 <h2 class="text-xl font-semibold">Welcome, {{ user?.name || 'Coordinator' }}</h2>
@@ -134,7 +135,8 @@
                     <template #default>
                         <h1 class="text-xl font-semibold">Manage Trips</h1>
                         <div v-if="trips.length">
-                            <div v-for="t in trips" :key="t.id" class="mb-3 rounded border p-3 last:mb-0">
+                            <div v-for="t in trips" :key="t.code" class="mb-3 rounded border p-3 last:mb-0">
+                                Trip id: {{ t.code }}
                                 <div class="flex items-center justify-between">
                                     <h3 class="font-medium">{{ t.name }}</h3>
                                     <UBadge color="primary" variant="soft">{{ t.status }}</UBadge>

@@ -58,7 +58,6 @@
                     description: state.description,
                     groupSize: state.groupSize ?? 0,
                     title: state.title ?? '',
-                    tripId: '',
                 },
             });
 

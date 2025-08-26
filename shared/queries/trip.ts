@@ -11,7 +11,6 @@ type CreateTripFormData = {
     endDate: Date;
     groupSize?: number | null;
     description?: string | null;
-    tripId: string;
 };
 
 export const useCreateTrip = defineMutation(() => {
@@ -23,9 +22,13 @@ export const useCreateTrip = defineMutation(() => {
         mutation: (args: { data: CreateTripFormData }) => {
             const createdByEmail = user.value?.email;
             const role = user.value?.role || 'PARTICIPANT';
+            const titlePart = (args.data.title ?? 'TRIP').slice(0, 4).toUpperCase();
+            const randomPart = Math.floor(1000 + Math.random() * 9000);
+            const code = `${titlePart}-${randomPart}`;
 
             const dataToSend = {
                 ...args.data,
+                code,
                 createdByRole: role,
                 createdBy: { connect: { email: createdByEmail } },
             };

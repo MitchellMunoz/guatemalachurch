@@ -132,6 +132,7 @@
             <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                 <UCard class="md:col-span-2" title="Upcoming Trips">
                     <template #default>
+                        <h1 class="text-xl font-semibold">Manage Trips</h1>
                         <div v-if="trips.length">
                             <div v-for="t in trips" :key="t.id" class="mb-3 rounded border p-3 last:mb-0">
                                 <div class="flex items-center justify-between">

@@ -2,6 +2,6 @@
 
 <template>
     <div>
-        <NuxtPage />
+        <TripRegistrationForm />
     </div>
 </template>

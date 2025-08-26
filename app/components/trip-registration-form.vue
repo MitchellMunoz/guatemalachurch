@@ -1,30 +1,37 @@
 <script setup lang="ts">
-    import { useToast } from '#imports'; // ensure this import
+    import { useAuth, useToast } from '#imports'; // ensure this import
     import { useCreateRegistration } from '#shared/queries/trip-registration';
     import type { FormError, FormSubmitEvent } from '@nuxt/ui';
 
     const { mutateAsync, isLoading } = useCreateRegistration();
     const toast = useToast();
-
+    const { user } = useAuth();
     const state = reactive({
         email: undefined as string | undefined,
-        fName: undefined as string | undefined,
-        lName: undefined as string | undefined,
+        firstName: undefined as string | undefined,
+        lastName: undefined as string | undefined,
         street: undefined as string | undefined,
         city: undefined as string | undefined,
         state: undefined as string | undefined,
         postal: undefined as string | undefined,
         phone: undefined as string | undefined,
         dob: undefined as string | undefined,
-        cName: undefined as string | undefined,
-        pName: undefined as string | undefined,
+        primaryContact: undefined as string | undefined,
         tripId: undefined as string | undefined,
     });
 
     const validate = (s: typeof state): FormError[] => {
         const errors: FormError[] = [];
         if (!s.email) errors.push({ name: 'email', message: 'Required' });
-        if (!isChurch.value && !s.tripId) errors.push({ name: 'tripId', message: 'Trip ID required' });
+        if (!s.firstName) errors.push({ name: 'firstName', message: 'Required' });
+        if (!s.lastName) errors.push({ name: 'lastName', message: 'Required' });
+        if (!s.phone) errors.push({ name: 'phone', message: 'Required' });
+        if (!s.street) errors.push({ name: 'street', message: 'Required' });
+        if (!s.city) errors.push({ name: 'city', message: 'Required' });
+        if (!s.state) errors.push({ name: 'state', message: 'Required' });
+        if (!s.postal) errors.push({ name: 'postal', message: 'Required' });
+        if (!s.dob) errors.push({ name: 'dob', message: 'Required' });
+        if (!s.primaryContact) errors.push({ name: 'primaryContact', message: 'Required' });
 
         return errors;
     };
@@ -33,60 +40,31 @@
 
     async function onSubmit(_e: FormSubmitEvent<typeof state>) {
         try {
-            const res = await mutateAsync({
+            await mutateAsync({
                 data: {
-                    registrationType: isChurch.value ? 'CHURCH' : 'INDIVIDUAL',
-                    trip: isChurch.value
-                        ? {
-                              create: {
-                                  startDate: new Date('2025-08-15'),
-                                  endDate: new Date('2025-08-20'),
-                                  groupSize: 10,
-                              },
-                          }
-                        : { connect: { id: state.tripId!.trim() } }, // NEW
-                    profiles: {
-                        create: {
-                            email: state.email!,
-                            city: state.city,
-                            dob: toDateOrUndef(state.dob),
-                            fName: state.fName,
-                            lName: state.lName,
-                            phone: state.phone,
-                            postal: state.postal,
-                            state: state.state,
-                            street: state.street,
-                        },
-                    },
+                    trip: { connect: { id: state.tripId!.trim() } },
+                    registrant: { connect: { id: user.value!.id } },
+                    primaryContact: state.primaryContact!,
+                    city: state.city,
+                    dob: toDateOrUndef(state.dob),
+                    phone: state.phone,
+                    postal: state.postal,
+                    state: state.state,
+                    street: state.street,
                 },
             });
-            console.log('Trip created:', res);
 
             toast.add({ title: 'Success', description: 'Registration saved.', color: 'success' });
         } catch (err) {
-            console.error('Create trip failed:', err);
+            console.error('Trip  Registration Failed:', err);
             toast.add({ title: 'Error', description: 'Failed to save registration.', color: 'error' });
         }
     }
-
-    const selectedTab = ref('individual');
-
-    const isChurch = computed(() => {
-        return selectedTab.value === 'church';
-    });
 </script>
 
 <template>
     <div>
-        <div class="flex justify-end pt-8">
-            <UTabs
-                v-model="selectedTab"
-                :items="[
-                    { value: 'individual', label: 'Individual' },
-                    { value: 'church', label: 'Church' },
-                ]"
-            />
-        </div>
+        <div class="flex justify-end pt-8"></div>
         <div class="flex flex-col gap-6 pt-8">
             <UForm :state="state" :validate="validate" @submit="onSubmit">
                 <div class="flex flex-col gap-6 md:flex-col lg:flex-col">
@@ -95,15 +73,11 @@
                             <h2 class="text-lg">Your information</h2>
                         </template>
                         <div class="flex flex-col md:flex-row md:gap-6">
-                            <UFormField :label="isChurch ? 'Church name' : 'First name'" name="fname" class="md:flex-1">
-                                <UInput v-model="state.fName" class="w-full" />
+                            <UFormField :label="'First name'" name="firstName" class="md:flex-1">
+                                <UInput v-model="state.firstName" class="w-full" />
                             </UFormField>
-                            <UFormField
-                                :label="isChurch ? 'Primary Contact' : 'Last Name'"
-                                name="lname"
-                                class="md:flex-1"
-                            >
-                                <UInput v-model="state.lName" class="w-full" />
+                            <UFormField :label="'Last Name'" name="lastName" class="md:flex-1">
+                                <UInput v-model="state.lastName" class="w-full" />
                             </UFormField>
                         </div>
                         <div class="flex flex-col md:flex-row md:gap-6">
@@ -112,6 +86,11 @@
                             </UFormField>
                             <UFormField label="Mobile phone" name="phone" class="md:flex-1">
                                 <UInput v-model="state.phone" type="tel" class="w-full" />
+                            </UFormField>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:gap-6">
+                            <UFormField label="Primary Contact" name="primaryContact" class="md:flex-1">
+                                <UInput v-model="state.primaryContact" type="tel" class="w-full" />
                             </UFormField>
                         </div>
                     </UCard>

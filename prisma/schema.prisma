@@ -28,11 +28,6 @@ enum ExpenseMethod {
   TRANSFER
 }
 
-enum RegistrationType {
-  INDIVIDUAL
-  CHURCH
-}
-
 model ExpenseType {
   id          Int       @id @default(autoincrement())
   name        String
@@ -96,34 +91,28 @@ model Trip {
   description    String?
   tripId         String
   createdByEmail String
-  createdBy      User     @relation("TripCreatedBy", fields: [createdByEmail], references: [email], onDelete: Cascade)
-
-  registrations TripRegistration[]
+  createdBy      User               @relation("TripCreatedBy", fields: [createdByEmail], references: [email], onDelete: Cascade)
+  createdByRole  UserRole           @default(PARTICIPANT)
+  registrations  TripRegistration[]
 
   @@index([createdByEmail])
 }
 
 //This is the participant who is registering for the trip
 model TripRegistration {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  registrationType RegistrationType @default(INDIVIDUAL)
-
-  tripId String
-  trip   Trip   @relation(fields: [tripId], references: [id])
-
-  registrantId String
-  registrant   User   @relation("TripRegistrant", fields: [registrantId], references: [id], onDelete: Cascade)
-
-  primaryContact String
-  dob            DateTime?
-  street         String?
-  city           String?
-  state          String?
-  postal         String?
-  phone          String?
+  id               String    @id @default(cuid())
+  registrationType UserRole  @default(PARTICIPANT)
+  tripId           String
+  trip             Trip      @relation(fields: [tripId], references: [id])
+  registrantId     String
+  registrant       User      @relation("TripRegistrant", fields: [registrantId], references: [id], onDelete: Cascade)
+  primaryContact   String
+  dob              DateTime?
+  street           String?
+  city             String?
+  state            String?
+  postal           String?
+  phone            String?
 
   profiles Profile[] @relation("ProfileTripRegistration")
 

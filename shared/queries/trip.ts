@@ -3,23 +3,37 @@ import { ref } from 'vue';
 import { useAuth } from '~/composables/useAuth'; // Adjust the import path as needed
 import type { Prisma } from '~~/.generated/prisma/client';
 
+type CreateTripFormData = {
+    title: string;
+    churchName?: string;
+    location?: string;
+    startDate: Date;
+    endDate: Date;
+    groupSize?: number | null;
+    description?: string | null;
+    tripId: string;
+};
+
 export const useCreateTrip = defineMutation(() => {
     const queryCache = useQueryCache();
-    const { user } = useAuth(); // Assumes useAuth provides the current user
+    const { user } = useAuth();
 
     return useMutation({
-        mutation: (data: Prisma.TripCreateArgs) => {
-            // Add createdBy to the data if not already set
-            const tripData = {
-                ...data,
-                data: {
-                    ...data.data,
-                    createdBy: user.value?.id, // Assumes user object has an id property
-                    createdByEmail: user.value?.email, // Assumes user object has an email property
-                },
+        // Accept UI payload; we'll inject auth-related fields
+        mutation: (args: { data: CreateTripFormData }) => {
+            const createdByEmail = user.value?.email;
+            const role = user.value?.role || 'PARTICIPANT';
+
+            const dataToSend = {
+                ...args.data,
+                createdByRole: role,
+                createdBy: { connect: { email: createdByEmail } },
             };
-            console.log('XXXXX tripData:', tripData);
-            return $fetch('/api/model/trip', { method: 'POST', params: { q: JSON.stringify(tripData) } });
+
+            return $fetch('/api/model/trip', {
+                method: 'POST',
+                params: { q: JSON.stringify({ data: dataToSend }) },
+            });
         },
         onSettled: () => queryCache.invalidateQueries({ key: ['Trip'] }),
     });

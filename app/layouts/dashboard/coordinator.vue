@@ -1,34 +1,24 @@
 <script setup lang="ts">
-    import { coordinatorNav } from '~/utils/nav';
     const { user, clear } = useAuth();
 </script>
 
 <template>
     <div>
-        <UHeader>
-            <template #left>
-                <NuxtLink to="/dashboard/coordinator"> Guatemala Church </NuxtLink>
-            </template>
-            <UNavigationMenu :items="coordinatorNav" />
-
+        <MainMenu>
             <template #right>
                 <div class="flex items-center gap-3 text-sm">
                     <h4>{{ user?.name }} - ({{ user?.role }})</h4>
                     <UButton
                         color="neutral"
                         variant="subtle"
-                        icon="i-heroicons-user"
-                        @click="
-                            () => {
-                                clear({ redirectTo: '/' });
-                            }
-                        "
+                        icon="i-heroicons-arrow-left-on-rectangle"
+                        @click="clear({ redirectTo: '/' }) as any"
                     >
                         Logout
                     </UButton>
                 </div>
             </template>
-        </UHeader>
+        </MainMenu>
         <UMain>
             <UContainer>
                 <slot />

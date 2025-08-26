@@ -76,7 +76,9 @@
                     </div>
                     <div v-else class="flex items-center justify-between"></div>
                     <div class="text-sm text-gray-500">No trips yet.</div>
-                    <UButton size="sm" @click="navigateTo('/dashboard/trip-registration')"> Register </UButton>
+                    <UButton size="sm" @click="navigateTo('/dashboard/participant/trip-registration')">
+                        Register
+                    </UButton>
                 </template>
             </UCard>
 

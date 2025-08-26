@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { useAuth, useToast } from '#imports'; // ensure this import
+
     import { useCreateTrip } from '#shared/queries/trip';
     import type { FormError, FormSubmitEvent } from '@nuxt/ui';
 
@@ -17,10 +18,9 @@
         description: string;
         groupSize: number;
         title: string;
-        email: string;
     };
 
-    const state = reactive(<Trip>{
+    const state = reactive<Trip>({
         churchName: '',
         location: [] as string[],
         startDate: '',
@@ -28,12 +28,10 @@
         description: '',
         groupSize: 0,
         title: '',
-        email: '',
     });
 
     const validate = (s: typeof state): FormError[] => {
         const errors: FormError[] = [];
-        if (!s.churchName) errors.push({ name: 'churchName', message: 'Required' });
         if (!s.location) errors.push({ name: 'location', message: 'Required' });
         if (!s.startDate) errors.push({ name: 'startDate', message: 'Required' });
         if (!s.endDate) errors.push({ name: 'endDate', message: 'Required' });
@@ -42,26 +40,27 @@
         return errors;
     };
 
-    const toDateOrUndef = (v?: string) => (v ? new Date(v) : undefined);
+    // const toDateOrUndef = (v?: string) => (v ? new Date(v) : undefined);
 
     async function onSubmit(_e: FormSubmitEvent<typeof state>) {
-        console.log('doot');
         try {
-            console.log('Submitting trip:', state);
-            const res = await mutateAsync({
+            if (!user.value) {
+                toast.add({ title: 'Error', description: 'You must be signed in.', color: 'error' });
+                return;
+            }
+
+            await mutateAsync({
                 data: {
                     churchName: state.churchName,
                     location: state.location.join(', '),
-                    startDate: new Date(state.startDate) ?? new Date(),
-                    endDate: new Date(state.endDate) ?? new Date(),
+                    startDate: new Date(state.startDate),
+                    endDate: new Date(state.endDate),
                     description: state.description,
                     groupSize: state.groupSize ?? 0,
                     title: state.title ?? '',
-                    tripId: '', // Backend will generate a unique ID
-                    createdByEmail: user.value?.email ?? '', // Assumes user object has an email property
+                    tripId: '',
                 },
             });
-            console.log('Trip created:', res);
 
             toast.add({ title: 'Success', description: 'Registration saved.', color: 'success' });
         } catch (err) {
@@ -81,13 +80,13 @@
                             <h2 class="text-lg">Your information</h2>
                         </template>
                         <div class="flex flex-col md:flex-row md:gap-6">
-                            <UFormField label="Church name" name="churchName" class="md:flex-1">
-                                <UInput v-model="state.churchName" class="w-full" />
+                            <UFormField label="Trip Title" name="title" class="md:flex-1">
+                                <UInput v-model="state.title" class="w-full" />
                             </UFormField>
                             <UFormField label="Location" name="location" class="md:flex-1" aria-placeholder="">
                                 <USelectMenu
-                                    multiple
                                     v-model="state.location"
+                                    multiple
                                     :items="locationOptions"
                                     class="w-full"
                                     placeholder="Select location"

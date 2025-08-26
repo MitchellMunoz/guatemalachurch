@@ -7,7 +7,7 @@ model User {
   email         String
   emailVerified Boolean
   image         String?
-  role          UserRole           @default(COORDINATOR)
+  role          UserRole           @default(PARTICIPANT)
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]

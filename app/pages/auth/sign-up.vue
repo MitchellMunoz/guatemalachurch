@@ -55,6 +55,11 @@
                     label: 'Confirm Password',
                 },
                 {
+                    name: 'churchName',
+                    type: 'text',
+                    label: 'Church Name',
+                },
+                {
                     name: 'firstName',
                     type: 'text',
                     label: 'First Name',

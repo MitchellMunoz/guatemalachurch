@@ -1,6 +1,8 @@
 <script setup lang="ts">
-    import { useAuth } from '#imports';
+    import { code } from '#build/ui-pro/prose';
+import { useAuth } from '#imports';
     import { useFindManyTrips } from '#shared/queries/trip';
+    import { reactive } from 'vue';
 
     definePageMeta({ layout: 'dashboard-coordinator', middleware: ['protected', 'role'] });
 
@@ -16,12 +18,19 @@
         }
     });
 
-    type TripCard = {
-        code: string;
+    class TripCard  {
+        code: number;
         name: string;
         startDate: string;
         endDate: string;
         status: 'UPCOMING' | 'CURRENT' | 'PAST';
+        constructor(code: number, name: number, startDate: string, endDate: string, status: string) {
+        this.code = code;
+        this.name = name;
+        this.startDate = startDate
+        this.endDate = endDate
+        this.status = status 
+}
     };
 
     const trips = computed<TripCard[]>(() =>
@@ -136,10 +145,14 @@
                         <h1 class="text-xl font-semibold">Manage Trips</h1>
                         <div v-if="trips.length">
                             <div v-for="t in trips" :key="t.code" class="mb-3 rounded border p-3 last:mb-0">
-                                Trip id: {{ t.code }}
+                                <div>Trip id: {{ t.code }}</div>
+
                                 <div class="flex items-center justify-between">
-                                    <h3 class="font-medium">{{ t.name }}</h3>
+                                    <h3 class="font-medium">Trip Name: {{ t.name }}</h3>
+                                    <div class="flex items-center gap-2">
                                     <UBadge color="primary" variant="soft">{{ t.status }}</UBadge>
+                                    <UButton size="sm" variant="soft" @click="navigateTo('/dashboard/coordinator/trips')" >DELETE</UButton>
+                                </div>
                                 </div>
                                 <p class="text-sm text-gray-500">{{ t.startDate }} → {{ t.endDate }}</p>
                             </div>
@@ -150,7 +163,7 @@
                             <UButton size="sm" @click="navigateTo('/dashboard/coordinator/church-registration')">
                                 Register Trip
                             </UButton>
-                            <UButton size="sm" variant="soft" @click="navigateTo('/dashboard/manage/trips')">
+                            <UButton size="sm" variant="soft" @click="navigateTo('/dashboard/coordinator/trips')">
                                 Manage Trips
                             </UButton>
                         </div>
@@ -161,7 +174,7 @@
                     <template #default>
                         <div class="space-y-2 text-sm">
                             <p class="text-gray-500">Create and manage teams for upcoming trips.</p>
-                            <UButton size="sm" variant="soft" @click="navigateTo('/dashboard/manage/teams')">
+                            <UButton size="sm" variant="soft" @click="navigateTo('/dashboard/coordinator/trips')">
                                 Manage Teams
                             </UButton>
                         </div>

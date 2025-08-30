@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
 
     switch (event.method) {
         case 'POST':
+            await assertTripAllowsRegistration(parsedQuery);
             return await $database.tripRegistration.create(parsedQuery);
         case 'DELETE':
             return await $database.tripRegistration.delete(parsedQuery);
@@ -24,3 +25,30 @@ export default defineEventHandler(async (event) => {
             throw createError({ statusCode: 405, statusMessage: 'Method not allowed' });
     }
 });
+
+type TripRegistrationCreateArgs = {
+    data?: {
+        trip?: { connect?: { id?: string; code?: string } };
+    };
+};
+
+async function assertTripAllowsRegistration(parsedQuery: TripRegistrationCreateArgs) {
+    const connect = parsedQuery?.data?.trip?.connect;
+    if (!connect) return;
+
+    let trip: { startDate: Date | string } | null = null;
+    if (connect.id) {
+        trip = await $database.trip.findUnique({ where: { id: connect.id }, select: { startDate: true } });
+    } else if (connect.code) {
+        trip = await $database.trip.findUnique({ where: { code: connect.code }, select: { startDate: true } });
+    }
+    if (!trip) return;
+
+    const start = new Date(trip.startDate);
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const today = new Date();
+    const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    if (startDay < yesterday) {
+        throw createError({ statusCode: 400, statusMessage: 'This trip has already started. Registration is closed.' });
+    }
+}

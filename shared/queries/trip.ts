@@ -7,8 +7,8 @@ type CreateTripFormData = {
     title: string;
     churchName?: string;
     location?: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     groupSize?: number | null;
     description?: string | null;
 };
@@ -56,3 +56,17 @@ export const useFindManyTrips = (defaultFilters?: Prisma.TripFindManyArgs) =>
 
         return { ...query, filters };
     })();
+
+type UpdateTripArgs = Prisma.TripUpdateArgs;
+
+export const useUpdateTrip = defineMutation(() => {
+    const queryCache = useQueryCache();
+    return useMutation({
+        mutation: (args: UpdateTripArgs) =>
+            $fetch('/api/model/trip', {
+                method: 'PATCH',
+                params: { q: JSON.stringify(args) },
+            }),
+        onSettled: () => queryCache.invalidateQueries({ key: ['Trip'] }),
+    });
+});

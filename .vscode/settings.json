@@ -1,39 +1,109 @@
 {
-    "files.associations": {
-        "*.css": "tailwindcss"
-    },
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-        "source.organizeImports": "always",
-        "source.fixAll.eslint": "explicit",
-        "source.sortImports": "always"
-    },
-    "eslint.workingDirectories": [{ "mode": "auto" }],
-    "eslint.useFlatConfig": true,
-    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
-    "[vue]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "editor.quickSuggestions": {
-        "strings": "on"
-    },
-    "tailwindCSS.classAttributes": ["class", "ui"],
-    "tailwindCSS.experimental.classRegex": [["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
-    "[prisma]": {
-        "editor.defaultFormatter": "Prisma.prisma"
-    },
-    "files.exclude": {
-        "package-lock.json": true,
-        // Dotfiles
-        ".{generated,nuxt,output,nvmrc,prettierignore,npmrc,prettierrc,env.example,gitignore}": true,
-        "node_modules": true,
-        // Config files
-        "{prettier,eslint,vitest}.config.{mjs,ts}": true
-    },
-    "window.openFoldersInNewWindow": "on",
-    "window.openFilesInNewWindow": "on"
+  "security.workspace.trust.untrustedFiles": "open",
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "window.restoreWindows": "none",
+  "json.schemas": [],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+
+  "editor.semanticHighlighting.enabled": true,
+
+  "editor.semanticTokenColorCustomizations": {
+    "rules": {
+      "function.decorator": { "foreground": "#FFA500" },
+      "method.decorator":   { "foreground": "#FFA500" },
+      "variable.decorator": { "foreground": "#FFA500" }
+    }
+  },
+
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      { "scope": "meta.decorator.python", "settings": { "foreground": "#FFA500" } },
+      { "scope": "entity.name.function.decorator.python", "settings": { "foreground": "#FFA500" } },
+      { "scope": "punctuation.definition.decorator.python", "settings": { "foreground": "#FFA500" } },
+
+      { "scope": "entity.name.function", "settings": { "foreground": "#00FF99" } },
+
+      {
+        "name": "Control-flow keywords (if/for/while) — purple",
+        "scope": [
+          "keyword.control.conditional",
+          "keyword.control.conditional.ts",
+          "keyword.control.loop",
+          "keyword.control.loop.ts"
+        ],
+        "settings": { "foreground": "#C586C0" }
+      },
+     
+
+      {
+        "name": "Function/method CALL parentheses — neon green (placed last so it wins)",
+        "scope": [
+          "meta.function-call punctuation.section.group.begin",
+          "meta.function-call punctuation.section.group.end",
+          "meta.method-call punctuation.section.group.begin",
+          "meta.method-call punctuation.section.group.end",
+
+          "meta.function-call punctuation.definition.parameters.begin",
+          "meta.function-call punctuation.definition.parameters.end",
+          "meta.method-call punctuation.definition.parameters.begin",
+          "meta.method-call punctuation.definition.parameters.end",
+
+          "meta.function-call.ts punctuation.section.group.begin.ts",
+          "meta.function-call.ts punctuation.section.group.end.ts",
+          "meta.method-call.ts punctuation.section.group.begin.ts",
+          "meta.method-call.ts punctuation.section.group.end.ts",
+
+          "meta.function-call.ts punctuation.definition.parameters.begin.ts",
+          "meta.function-call.ts punctuation.definition.parameters.end.ts",
+          "meta.method-call.ts punctuation.definition.parameters.begin.ts",
+          "meta.method-call.ts punctuation.definition.parameters.end.ts",
+
+          "meta.function-call.js punctuation.section.group.begin.js",
+          "meta.function-call.js punctuation.section.group.end.js",
+          "meta.method-call.js punctuation.section.group.begin.js",
+          "meta.method-call.js punctuation.section.group.end.js",
+
+          "meta.function-call.js punctuation.definition.parameters.begin.js",
+          "meta.function-call.js punctuation.definition.parameters.end.js",
+          "meta.method-call.js punctuation.definition.parameters.begin.js",
+          "meta.method-call.js punctuation.definition.parameters.end.js",
+
+          "source.vue meta.embedded.expression.ts meta.function-call.ts punctuation.section.group.begin.ts",
+          "source.vue meta.embedded.expression.ts meta.function-call.ts punctuation.section.group.end.ts",
+          "source.vue meta.embedded.expression.ts meta.method-call.ts punctuation.section.group.begin.ts",
+          "source.vue meta.embedded.expression.ts meta.method-call.ts punctuation.section.group.end.ts",
+
+          "source.vue meta.embedded.expression.ts meta.function-call.ts punctuation.definition.parameters.begin.ts",
+          "source.vue meta.embedded.expression.ts meta.function-call.ts punctuation.definition.parameters.end.ts",
+          "source.vue meta.embedded.expression.ts meta.method-call.ts punctuation.definition.parameters.begin.ts",
+          "source.vue meta.embedded.expression.ts meta.method-call.ts punctuation.definition.parameters.end.ts",
+
+          "source.vue meta.embedded.expression.js meta.function-call.js punctuation.section.group.begin.js",
+          "source.vue meta.embedded.expression.js meta.function-call.js punctuation.section.group.end.js",
+          "source.vue meta.embedded.expression.js meta.method-call.js punctuation.section.group.begin.js",
+          "source.vue meta.embedded.expression.js meta.method-call.js punctuation.section.group.end.js",
+
+          "source.vue meta.embedded.expression.js meta.function-call.js punctuation.definition.parameters.begin.js",
+          "source.vue meta.embedded.expression.js meta.function-call.js punctuation.definition.parameters.end.js",
+          "source.vue meta.embedded.expression.js meta.method-call.js punctuation.definition.parameters.begin.js",
+          "source.vue meta.embedded.expression.js meta.method-call.js punctuation.definition.parameters.end.js"
+        ],
+        "settings": { "foreground": "#00FF99" }
+      }
+    ]
+  },
+
+  "editor.bracketPairColorization.enabled": false,
+  "editor.guides.bracketPairs": "active",
+
+  "editor.quickSuggestions": { "strings": "on" },
+
+  "tailwindCSS.classAttributes": ["class", "ui"],
+  "tailwindCSS.experimental.classRegex": [
+    ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+
+  "workbench.iconTheme": "material-icon-theme"
 }

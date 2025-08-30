@@ -85,8 +85,8 @@ model Trip {
   title          String
   churchName     String?
   location       String?
-  startDate      DateTime
-  endDate        DateTime
+  startDate      String // "YYYY-MM-DD"   // stored as DATE (no time)
+  endDate        String // stored as DATE (no time)
   groupSize      Int?
   description    String?
   createdByEmail String

@@ -1,36 +1,40 @@
 import z from 'zod';
+import { validateTripDates, parseTripQuery } from '../../utils/tripDates'
+
 
 const QuerySchema = z.object({
-    op: z.enum(['findMany', 'findUnique']).optional(),
-    q: z.string(),
+  op: z.enum(['findMany', 'findUnique']).optional(),
+  q: z.string(),
 });
 
+
 export default defineEventHandler(async (event) => {
-    const query = await getValidatedQuery(event, QuerySchema.parse);
+  // Validate we at least have the expected query shape
+  const query = await getValidatedQuery(event, QuerySchema.parse);
+  const method = event.method.toUpperCase();
 
-    const parsedQuery = JSON.parse(query.q);
+  // Parse ?q=... once, with a clean error if it's malformed
+  const parsedQuery = parseTripQuery(query.q);
 
-    switch (event.method) {
-        case 'POST':
-            return await $database.trip.create(parsedQuery);
-        case 'DELETE':
-            return await $database.trip.delete(parsedQuery);
-        case 'GET':
-            switch (query.op) {
-                case 'findMany':
-                    return await $database.trip.findMany(parsedQuery);
-                case 'findUnique':
-                    return await $database.trip.findUnique(parsedQuery);
-                default:
-                    throw createError({
-                        statusCode: 400,
-                        statusMessage: 'Invalid operation',
-                    });
-            }
-        default:
-            throw createError({
-                statusCode: 405,
-                statusMessage: 'Method not allowed',
-            });
+  switch (method) {
+    case 'POST': {
+      validateTripDates(parsedQuery?.data);
+      return $database.trip.create(parsedQuery);
     }
+    case 'PUT':
+    case 'PATCH': {
+      validateTripDates(parsedQuery?.data);
+      return $database.trip.update(parsedQuery);
+    }
+    case 'DELETE': {
+      return $database.trip.delete(parsedQuery);
+    }
+    case 'GET': {
+      if (query.op === 'findMany') return $database.trip.findMany(parsedQuery);
+      if (query.op === 'findUnique') return $database.trip.findUnique(parsedQuery);
+      throw createError({ statusCode: 400, statusMessage: 'Invalid operation' });
+    }
+    default:
+      throw createError({ statusCode: 405, statusMessage: 'Method not allowed' });
+  }
 });

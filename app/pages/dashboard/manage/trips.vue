@@ -1,164 +1,140 @@
 <script setup lang="ts">
-    import { useToast } from '#imports'; // ensure this import
-    import { useCreateRegistration } from '#shared/queries/trip-registration';
-    import { US_STATES } from '@/constants/us-states';
-    import type { FormError, FormSubmitEvent } from '@nuxt/ui';
-    import BaseInput from '~/components/base-input.vue';
-    import PostalInput from '~/components/postal-input.vue';
+    import { useAuth } from '#imports';
+    import { useFindManyTrips } from '#shared/queries/trip';
+    import { format } from 'date-fns';
+    import type { Prisma } from '~~/.generated/prisma/client';
 
-    const { mutateAsync, isLoading } = useCreateRegistration();
-    const toast = useToast();
+    definePageMeta({ layout: 'dashboard-coordinator', middleware: ['protected', 'role'] });
+    useHead({ title: 'Manage Trips' });
 
-    const state = reactive({
-        email: undefined as string | undefined,
-        fName: undefined as string | undefined,
-        lName: undefined as string | undefined,
-        street: undefined as string | undefined,
-        city: undefined as string | undefined,
-        state: undefined as string | undefined,
-        postal: undefined as string | undefined,
-        phone: undefined as string | undefined,
-        dob: undefined as string | undefined, // input type="date" gives 'YYYY-MM-DD'
-        cName: undefined as string | undefined,
-        pName: undefined as string | undefined,
+    const { user } = useAuth();
+    const { data, filters, isLoading } = useFindManyTrips();
+
+    const searchLocation = ref('');
+    const searchTitle = ref('');
+
+    watchEffect(() => {
+        const tripFilter: Prisma.TripWhereInput = {};
+        if (user.value?.email) {
+            tripFilter.createdByEmail = user.value.email;
+        }
+        if (searchTitle.value) {
+            tripFilter.OR = [
+                { title: { contains: searchTitle.value } },
+                { churchName: { contains: searchTitle.value } },
+            ];
+        }
+        if (searchLocation.value) {
+            tripFilter.location = { contains: searchLocation.value };
+        }
+        filters.value.where = tripFilter;
+        filters.value.orderBy = [{ startDate: 'desc' }];
     });
 
-    const validate = (s: typeof state): FormError[] => {
-        const errors: FormError[] = [];
-        if (!s.email) errors.push({ name: 'email', message: 'Required' });
-        return errors;
+    type Row = {
+        title: string;
+        code: string;
+        location: string;
+        dates: string;
     };
 
-    const toDateOrUndef = (v?: string) => (v ? new Date(v) : undefined);
+    type TripRow = {
+        title: string;
+        code?: string | null;
+        location?: string | null;
+        startDate: string | Date;
+        endDate: string | Date;
+    };
 
-    async function onSubmit(_e: FormSubmitEvent<typeof state>) {
-        try {
-            const res = await mutateAsync({
-                data: {
-                    registrationType: isChurch.value ? 'CHURCH' : 'INDIVIDUAL',
-                    trip: {
-                        create: {
-                            startDate: new Date('2025-08-15'),
-                            endDate: new Date('2025-08-20'),
-                            groupSize: 10,
-                        },
-                    },
-                    profiles: {
-                        create: {
-                            email: state.email!,
-                            city: state.city,
-                            dob: toDateOrUndef(state.dob),
-                            fName: state.fName,
-                            lName: state.lName,
-                            phone: state.phone,
-                            postal: state.postal,
-                            state: state.state,
-                            street: state.street,
-                        },
-                    },
-                },
-            });
-            console.log('Trip created:', res);
-
-            toast.add({ title: 'Success', description: 'Registration saved.', color: 'success' });
-        } catch (err) {
-            console.error('Create trip failed:', err);
-            toast.add({ title: 'Error', description: 'Failed to save registration.', color: 'error' });
-        }
+    function toDate(input: string | Date): string {
+        const d = new Date(input);
+        return format(d, 'MMM dd, yyyy');
     }
 
-    const selectedTab = ref('individual');
+    function build_trips(data: TripRow[] | undefined): Row[] {
+        const rows: Row[] = [];
+        for (const t of data || []) {
+            const title = t.title || '';
+            const code = t.code || '';
+            const location = t.location || '';
+            const start = toDate(t.startDate);
+            const end = toDate(t.endDate);
+            const dates = `${start} → ${end}`;
+            const row: Row = { title, code, location, dates };
+            rows.push(row);
+        }
+        return rows;
+    }
+    function get_trips(): Row[] {
+        return build_trips(data.value);
+    }
+    const trips = computed(get_trips);
 
-    const isChurch = computed(() => {
-        return selectedTab.value === 'church';
-    });
+    function copyCode(code: string) {
+        if (code) {
+            navigator.clipboard.writeText(code);
+        }
+    }
 </script>
 
 <template>
-    <div>
-        <div class="flex justify-end pt-8">
-            <UTabs
-                v-model="selectedTab"
-                :items="[
-                    { value: 'individual', label: 'Individual' },
-                    { value: 'church', label: 'Church' },
-                ]"
-            />
-        </div>
-        <div class="flex flex-col gap-6 pt-8">
-            <UForm :state="state" :validate="validate" @submit="onSubmit">
-                <div class="flex flex-col gap-6 md:flex-col lg:flex-col">
-                    <UCard class="w-full rounded-2xl border pb-4 shadow-sm">
-                        <template #header>
-                            <h2 class="text-lg">Your information</h2>
-                        </template>
-                        <div class="flex flex-col md:flex-row md:gap-6">
-                            <UFormField :label="isChurch ? 'Church name' : 'First name'" name="fname" class="md:flex-1">
-                                <BaseInput v-model="state.fName" class="w-full" />
-                            </UFormField>
-                            <UFormField
-                                :label="isChurch ? 'Primary Contact' : 'Last Name'"
-                                name="lname"
-                                class="md:flex-1"
-                            >
-                                <BaseInput v-model="state.lName" class="w-full" />
-                            </UFormField>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row md:gap-6">
-                            <UFormField label="Email" name="email" class="md:flex-1">
-                                <BaseInput v-model="state.email" label="Email" type="email" />
-                            </UFormField>
-
-                            <UFormField label="Mobile phone" name="phone" class="md:flex-1">
-                                <BaseInput v-model="state.phone" type="tel" class="w-full" />
-                            </UFormField>
-                        </div>
-                    </UCard>
-
-                    <UCard class="w-full rounded-2xl border pb-4 shadow-sm">
-                        <template #header>
-                            <h2 class="text-lg">Address & Age</h2>
-                        </template>
-                        <div class="flex flex-col md:flex-row md:gap-6">
-                            <UFormField label="Street address" name="street" class="md:flex-1">
-                                <BaseInput v-model="state.street" class="w-full" />
-                            </UFormField>
-                            <UFormField label="City" name="city" class="md:flex-1">
-                                <BaseInput v-model="state.city" class="w-full" />
-                            </UFormField>
-                        </div>
-                        <div class="flex flex-col gap-4 md:flex-row md:gap-6">
-                            <UFormField label="State" name="region" class="md:flex-1">
-                                <BaseInput
-                                    v-model="state.state"
-                                    :select="true"
-                                    :options="[...US_STATES]"
-                                    placeholder="Select state"
-                                />
-                            </UFormField>
-                            <UFormField label="Postal code" name="postal" class="md:flex-1">
-                                <PostalInput
-                                    v-model="state.postal"
-                                    label="12345"
-                                    class="w-full"
-                                    digits-only
-                                    :max-length="5"
-                                    inputmode="numeric"
-                                />
-                            </UFormField>
-                            <UFormField label="Date of birth" name="dob" class="md:flex-1">
-                                <BaseInput v-model="state.dob" type="date" class="w-full" />
-                            </UFormField>
-                        </div>
-                    </UCard>
-
-                    <div class="flex flex-col gap-4 md:flex-row">
-                        <UButton color="primary" variant="ghost" type="button">Save draft</UButton>
-                        <UButton type="submit" :loading="isLoading">Submit</UButton>
-                    </div>
+    <div class="p-6">
+        <UCard title="Manage Trips">
+            <template #header>
+                <div class="flex items-center justify-between gap-3">
+                    <div class="text-lg font-medium">Manage Trips</div>
+                    <UButton size="sm" @click="navigateTo('/dashboard/coordinator/church-registration')"
+                        >Create Trip</UButton
+                    >
                 </div>
-            </UForm>
-        </div>
+            </template>
+
+            <div class="mb-4 flex flex-wrap items-center gap-3">
+                <UInput v-model="searchTitle" placeholder="Search title or church" class="w-full max-w-sm" />
+                <UInput v-model="searchLocation" placeholder="Location" class="w-full max-w-xs" />
+            </div>
+
+            <div v-if="isLoading" class="text-sm text-gray-500">Loading...</div>
+            <div v-else>
+                <div v-if="trips.length" class="overflow-x-auto">
+                    <table class="min-w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="px-3 py-2">Title</th>
+                                <th class="px-3 py-2">Code</th>
+                                <th class="px-3 py-2">Location</th>
+                                <th class="px-3 py-2">Dates</th>
+                                <th class="px-3 py-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="t in trips" :key="t.code" class="border-b last:border-0">
+                                <td class="px-3 py-2">{{ t.title }}</td>
+                                <td class="px-3 py-2">
+                                    <span v-if="t.code">{{ t.code }}</span>
+                                    <span v-else class="text-gray-400">—</span>
+                                </td>
+                                <td class="px-3 py-2">{{ t.location || '—' }}</td>
+                                <td class="px-3 py-2">{{ t.dates }}</td>
+                                <td class="px-3 py-2">
+                                    <div class="flex items-center gap-2">
+                                        <UButton size="xs" variant="soft" :disabled="!t.code" @click="copyCode(t.code)"
+                                            >Copy Code</UButton
+                                        >
+                                        <UButton
+                                            size="xs"
+                                            variant="soft"
+                                            @click="navigateTo(`/dashboard/trips/${t.code}`)"
+                                            >View</UButton
+                                        >
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div v-else class="text-sm text-gray-500">No trips found.</div>
+            </div>
+        </UCard>
     </div>
 </template>

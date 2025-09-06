@@ -13,6 +13,13 @@ export default defineNuxtConfig({
         typeCheck: 'build',
     },
     css: ['~/assets/css/main.css'],
+    colorMode: {
+        preference: 'dark',
+        fallback: 'dark',
+        classSuffix: '',
+        storage: 'cookie',
+    },
+
     experimental: {
         typedPages: true,
     },

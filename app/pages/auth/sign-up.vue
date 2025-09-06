@@ -34,7 +34,7 @@
 <template>
     <UCard class="w-full max-w-sm" variant="soft">
         <UAuthForm
-            title="Sign Up"
+            title="Register Your Church for a trip!"
             :schema="schema"
             :validate-on="['blur']"
             :loading="isLoading"
@@ -53,6 +53,11 @@
                     name: 'confirmPassword',
                     type: 'password',
                     label: 'Confirm Password',
+                },
+                {
+                    name: 'churchName',
+                    type: 'text',
+                    label: 'Church Name',
                 },
                 {
                     name: 'firstName',

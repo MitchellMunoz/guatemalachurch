@@ -1,13 +1,19 @@
 model User {
-  id            String    @id
-  name          String
+  id            String             @id
+  name          String?
+  firstName     String?
+  lastName      String?
+  churchName    String?
   email         String
   emailVerified Boolean
   image         String?
+  role          UserRole           @default(PARTICIPANT)
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  trips         Trip[]             @relation("TripCreatedBy")
+  registrations TripRegistration[] @relation("TripRegistrant")
 
   @@unique([email])
   @@map("user")
@@ -56,24 +62,4 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
-}
-
-model Trips {
-  id     String    @id @default(cuid())
-  email  String
-  fName  String?
-  lName  String?
-  dob    DateTime?
-  street String?
-  city   String?
-  state  String?
-  postal String?
-  phone  String?
-  cName  String? // Church Name
-  pName  String? // Primary Contact
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([email])
 }

@@ -1,9 +1,4 @@
-<script setup lang="ts">
-    definePageMeta({
-        layout: 'dashboard',
-        middleware: 'protected',
-    });
-</script>
+<script setup lang="ts"></script>
 
 <template>
     <div>

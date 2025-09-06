@@ -1,6 +1,5 @@
 <script setup lang="ts">
-    import { code } from '#build/ui-pro/prose';
-import { useAuth } from '#imports';
+    import { useAuth } from '#imports';
     import { useFindManyTrips } from '#shared/queries/trip';
     import { reactive } from 'vue';
 
@@ -18,20 +17,20 @@ import { useAuth } from '#imports';
         }
     });
 
-    class TripCard  {
+    class TripCard {
         code: number;
         name: string;
         startDate: string;
         endDate: string;
         status: 'UPCOMING' | 'CURRENT' | 'PAST';
         constructor(code: number, name: number, startDate: string, endDate: string, status: string) {
-        this.code = code;
-        this.name = name;
-        this.startDate = startDate
-        this.endDate = endDate
-        this.status = status 
-}
-    };
+            this.code = code;
+            this.name = name;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.status = status;
+        }
+    }
 
     const trips = computed<TripCard[]>(() =>
         (tripRows.value ?? []).map((t) => ({
@@ -93,7 +92,6 @@ import { useAuth } from '#imports';
 
 <template>
     <div>
-        Preguntar a ChatGPT
         <div class="p-6">
             <div class="mb-6">
                 <h2 class="text-xl font-semibold">Welcome, {{ user?.name || 'Coordinator' }}</h2>
@@ -150,9 +148,14 @@ import { useAuth } from '#imports';
                                 <div class="flex items-center justify-between">
                                     <h3 class="font-medium">Trip Name: {{ t.name }}</h3>
                                     <div class="flex items-center gap-2">
-                                    <UBadge color="primary" variant="soft">{{ t.status }}</UBadge>
-                                    <UButton size="sm" variant="soft" @click="navigateTo('/dashboard/coordinator/trips')" >DELETE</UButton>
-                                </div>
+                                        <UBadge color="primary" variant="soft">{{ t.status }}</UBadge>
+                                        <UButton
+                                            size="sm"
+                                            variant="soft"
+                                            @click="navigateTo('/dashboard/coordinator/trips')"
+                                            >DELETE</UButton
+                                        >
+                                    </div>
                                 </div>
                                 <p class="text-sm text-gray-500">{{ t.startDate }} → {{ t.endDate }}</p>
                             </div>

@@ -3,9 +3,7 @@
 </script>
 
 <template>
-  
-            <UContainer>
-    
-            </UContainer>
-
+    <UContainer>
+        YOLO
+    </UContainer>
 </template>

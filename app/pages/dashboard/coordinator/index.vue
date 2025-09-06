@@ -11,25 +11,19 @@
 
     const { user } = useAuth();
     const { data: tripRows, filters } = useFindManyTrips();
+
     watchEffect(() => {
         if (user.value?.email) {
             filters.value.where = { createdByEmail: user.value.email };
         }
     });
 
-    class TripCard {
-        code: number;
+    interface TripCard {
+        code: string;
         name: string;
         startDate: string;
         endDate: string;
         status: 'UPCOMING' | 'CURRENT' | 'PAST';
-        constructor(code: number, name: number, startDate: string, endDate: string, status: string) {
-            this.code = code;
-            this.name = name;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.status = status;
-        }
     }
 
     const trips = computed<TripCard[]>(() =>

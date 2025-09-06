@@ -41,6 +41,7 @@ export const useCreateTrip = defineMutation(() => {
         onSettled: () => queryCache.invalidateQueries({ key: ['Trip'] }),
     });
 });
+
 export const useFindManyTrips = (defaultFilters?: Prisma.TripFindManyArgs) =>
     defineQuery(() => {
         const filters = ref<Prisma.TripFindManyArgs>(defaultFilters || {});

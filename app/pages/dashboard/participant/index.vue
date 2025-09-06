@@ -1,7 +1,5 @@
 <script setup lang="ts">
-    import { setPageLayout } from '#app';
-
-    setPageLayout('dashboard-participant');
+    definePageMeta({ layout: 'dashboard-participant', middleware: ['protected', 'role'] });
 
     useHead({
         title: 'Participant Dashboard',

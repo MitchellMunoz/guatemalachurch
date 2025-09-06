@@ -8,7 +8,7 @@
         splash: {
             contentWidth: 'xl',
             src: '/images/church.jpeg',
-            alt: 'Sunrise over desert ridge',
+            alt: 'Church members worshiping together',
             eyebrow: 'Guatemala Church',
             title: 'Serving With Love. Changing Lives.',
             subtitle: 'Join us as we build projects, lead trips, and support communities across Guatemala.',
@@ -45,22 +45,6 @@
 
 <template>
     <div>
-        <section class="py-16 sm:py-24">
-            <div class="text-center">
-                <UBadge size="sm" variant="soft" class="mb-3">Guatemala Church</UBadge>
-                <h1 class="text-3xl font-bold tracking-tight sm:text-5xl">Serving With Love. Changing Lives.</h1>
-                <p class="mx-auto mt-4 max-w-2xl text-gray-600 dark:text-gray-300">
-                    Join us as we build projects, lead trips, and support communities across Guatemala.
-                </p>
-                <div class="mt-8 flex justify-center gap-3">
-                    <UButton to="/auth/sign-up" color="primary" size="lg">Get Involved</UButton>
-                    <UButton to="/projects" size="lg" variant="ghost" icon="i-heroicons-arrow-right-circle"
-                        >Learn More</UButton
-                    >
-                </div>
-            </div>
-        </section>
-
         <section class="py-12">
             <div class="grid gap-6 sm:grid-cols-3">
                 <UCard v-for="f in features" :key="f.title" class="h-full">

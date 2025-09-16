@@ -34,8 +34,6 @@
         if (searchLocation.value) {
             tripFilter.location = { contains: searchLocation.value };
         }
-        filters.value.where = tripFilter;
-        filters.value.orderBy = [{ startDate: 'desc' }];
     });
 
     type Row = {

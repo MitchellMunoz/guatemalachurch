@@ -141,7 +141,9 @@
         <UCard :title="data?.title">
             <template #header>
                 <div class="flex items-center justify-between gap-3">
-                    <div class="text-lg font-medium">{{ data?.title }}</div>
+                    <div class="text-lg font-medium">
+                        <a :href="`/dashboard/trips/${data?.code}`">{{ data?.title }}</a>
+                    </div>
                     THIS IS WHERE A COORDINATOR COULD ADD NOTES FOR A TRIP
                     {{ data.groupSize }}
                 </div>

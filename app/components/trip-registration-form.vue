@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import { UFormField } from '#components';
     import { useAuth, useToast } from '#imports'; // ensure this import
     import { useCreateRegistration } from '#shared/queries/trip-registration';
     import type { FormError, FormSubmitEvent } from '@nuxt/ui';
@@ -17,7 +18,7 @@
         phone: undefined as string | undefined,
         dob: undefined as string | undefined,
         primaryContact: undefined as string | undefined,
-        tripId: undefined as string | undefined,
+        code: undefined as string | undefined,
     });
 
     const validate = (s: typeof state): FormError[] => {
@@ -40,9 +41,10 @@
 
     async function onSubmit(_e: FormSubmitEvent<typeof state>) {
         try {
+            console.log('state', state);
             await mutateAsync({
                 data: {
-                    trip: { connect: { id: state.tripId!.trim() } },
+                    trip: { connect: { code: state.code!.trim() } },
                     registrant: { connect: { id: user.value!.id } },
                     primaryContact: state.primaryContact!,
                     city: state.city,
@@ -73,6 +75,14 @@
                             <h2 class="text-lg">Your information</h2>
                         </template>
                         <div class="flex flex-col md:flex-row md:gap-6">
+                            <UFormField
+                                :label="'Trip Code'"
+                                name="code"
+                                class="md:flex-1"
+                                help="Provided by your coordinator"
+                            >
+                                <UInput v-model="state.code" class="w-full" />
+                            </UFormField>
                             <UFormField :label="'First name'" name="firstName" class="md:flex-1">
                                 <UInput v-model="state.firstName" class="w-full" />
                             </UFormField>

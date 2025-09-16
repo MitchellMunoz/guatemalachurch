@@ -1,14 +1,21 @@
 <script setup lang="ts">
     import { useAuth } from '#imports';
-    import { useFindManyTrips, useUpdateTrip } from '#shared/queries/trip';
+    import { useFindTripByCode, useUpdateTrip } from '#shared/queries/trip';
     import { format, parse } from 'date-fns';
     import type { Prisma } from '~~/.generated/prisma/client';
 
-    definePageMeta({ layout: 'dashboard-coordinator', middleware: ['protected', 'role'] });
+    definePageMeta({ layout: 'brochure', middleware: ['protected', 'role'] });
     useHead({ title: 'My Trip' });
 
     const { user } = useAuth();
-    const { data, filters, isLoading } = useFindManyTrips();
+
+    // get the code from our route params
+    const route = useRoute();
+    const code = route.params.code as string;
+
+    const { data, isLoading } = useFindTripByCode(code);
+
+    console.log('what is our trip data', data);
 
     const searchLocation = ref('');
     const searchTitle = ref('');
@@ -130,78 +137,17 @@
 </script>
 
 <template>
-    <div class="p-6">
-        <UCard title="Manage Trips">
+    <div class="p-6" v-if="data">
+        <UCard :title="data?.title">
             <template #header>
                 <div class="flex items-center justify-between gap-3">
-                    <div class="text-lg font-medium">Manage Trips</div>
-                    <UButton size="sm" @click="navigateTo('/dashboard/coordinator/church-registration')"
-                        >Create Trip</UButton
-                    >
+                    <div class="text-lg font-medium">
+                        <a :href="`/dashboard/trips/${data?.code}`">{{ data?.title }}</a>
+                    </div>
+                    THIS IS WHERE A COORDINATOR COULD ADD NOTES FOR A TRIP
+                    {{ data.groupSize }}
                 </div>
             </template>
-
-            <div class="mb-4 flex flex-wrap items-center gap-3">
-                <UInput v-model="searchTitle" placeholder="Search title or church" class="w-full max-w-sm" />
-                <UInput v-model="searchLocation" placeholder="Location" class="w-full max-w-xs" />
-            </div>
-
-            <div v-if="isLoading" class="text-sm text-gray-500">Loading...</div>
-            <div v-else>
-                <div v-if="trips.length" class="overflow-x-auto">
-                    <table class="min-w-full text-left text-sm">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="px-3 py-2">Title</th>
-                                <th class="px-3 py-2">Code</th>
-                                <th class="px-3 py-2">Location</th>
-                                <th class="px-3 py-2">Start Date</th>
-                                <th class="px-3 py-2">End Date</th>
-                                <th class="px-3 py-2">Group Size</th>
-                                <th class="px-3 py-2">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="t in trips" :key="t.code" class="border-b last:border-0">
-                                <td class="px-3 py-2">
-                                    <EditableField v-model="t.title" @commit="onTitleCommit(t, $event)" />
-                                </td>
-                                <td class="px-3 py-2">
-                                    <span v-if="t.code">{{ t.code }}</span>
-                                    <span v-else class="text-gray-400">—</span>
-                                </td>
-                                <td class="px-3 py-2">{{ t.location || '—' }}</td>
-                                <td class="px-3 py-2">
-                                    <EditableField :model-value="t.start" @commit="onStartCommit(t, $event)" />
-                                </td>
-                                <td class="px-3 py-2">
-                                    <EditableField :model-value="t.end" @commit="onEndCommit(t, $event)" />
-                                </td>
-                                <td class="px-3 py-2">
-                                    <EditableField
-                                        :model-value="String(t.groupSize ?? '')"
-                                        @commit="onGroupSizeCommit(t, $event)"
-                                    />
-                                </td>
-                                <td class="px-3 py-2">
-                                    <div class="flex items-center gap-2">
-                                        <UButton size="xs" variant="soft" :disabled="!t.code" @click="copyCode(t.code)"
-                                            >Copy Code</UButton
-                                        >
-                                        <UButton
-                                            size="xs"
-                                            variant="soft"
-                                            @click="navigateTo(`/dashboard/trips/${t.code}`)"
-                                            >View</UButton
-                                        >
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div v-else class="text-sm text-gray-500">No trips found.</div>
-            </div>
         </UCard>
     </div>
 </template>

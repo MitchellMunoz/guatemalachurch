@@ -137,7 +137,9 @@
                         <h1 class="text-xl font-semibold">Manage Trips</h1>
                         <div v-if="trips.length">
                             <div v-for="t in trips" :key="t.code" class="mb-3 rounded border p-3 last:mb-0">
-                                <div>Trip id: {{ t.code }}</div>
+                                <UButton @click="navigateTo(`/dashboard/coordinator/trips/${t.code}`)"
+                                    >Trip id: {{ t.code }}</UButton
+                                >
 
                                 <div class="flex items-center justify-between">
                                     <h3 class="font-medium">Trip Name: {{ t.name }}</h3>

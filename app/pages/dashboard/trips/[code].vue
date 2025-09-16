@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { useAuth } from '#imports';
-    import { useFindManyTrips, useUpdateTrip } from '#shared/queries/trip';
+    import { useFindTripByCode, useUpdateTrip } from '#shared/queries/trip';
     import { format, parse } from 'date-fns';
     import type { Prisma } from '~~/.generated/prisma/client';
 
@@ -8,7 +8,14 @@
     useHead({ title: 'My Trip' });
 
     const { user } = useAuth();
-    const { data, filters, isLoading } = useFindManyTrips();
+
+    // get the code from our route params
+    const route = useRoute();
+    const code = route.params.code as string;
+
+    const { data, isLoading } = useFindTripByCode(code);
+
+    console.log('what is our trip data', data);
 
     const searchLocation = ref('');
     const searchTitle = ref('');
@@ -27,8 +34,6 @@
         if (searchLocation.value) {
             tripFilter.location = { contains: searchLocation.value };
         }
-        filters.value.where = tripFilter;
-        filters.value.orderBy = [{ startDate: 'desc' }];
     });
 
     type Row = {
@@ -129,4 +134,15 @@
     }
 </script>
 
-<template>YOU MADE IT TO THE TRIP PAGE</template>
+<template>
+    <div class="p-6" v-if="data">
+        <UCard :title="data?.title">
+            <template #header>
+                <div class="flex items-center justify-between gap-3">
+                    <div class="text-lg font-medium">{{ data?.title }}</div>
+                    {{ data.groupSize }}
+                </div>
+            </template>
+        </UCard>
+    </div>
+</template>

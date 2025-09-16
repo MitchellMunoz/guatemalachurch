@@ -58,6 +58,17 @@ export const useFindManyTrips = (defaultFilters?: Prisma.TripFindManyArgs) =>
         return { ...query, filters };
     })();
 
+export const useFindTripByCode = (code: string) => {
+    return useQuery<Prisma.TripGetPayload<Prisma.TripFindUniqueArgs>>({
+        key: () => ['Trip', 'findUnique', code],
+        query: () =>
+            $fetch<Prisma.TripGetPayload<Prisma.TripFindUniqueArgs>>('/api/model/trip', {
+                method: 'GET',
+                params: { op: 'findUnique', q: JSON.stringify({ where: { code } }) },
+            }),
+    });
+};
+
 type UpdateTripArgs = Prisma.TripUpdateArgs;
 
 export const useUpdateTrip = defineMutation(() => {
